@@ -1,2 +1,3 @@
 # Single-cell-Sequencing-using-Seurat
-![_- visual selection (1)](https://github.com/user-attachments/assets/39fbec94-3025-4130-bb5f-9496a01a7a51)
+
+![1  Data Acquisition and Input - visual selection (1)](https://github.com/user-attachments/assets/0db85682-6feb-4167-911c-9467701bc29e)
