@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computational Stem Cell Engineering | Interactive Supplementary Figures</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis-timeline/7.7.3/vis-timeline-graph2d.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --wong-orange: #E69F00;
+            --wong-sky-blue: #56B4E9;
+            --wong-bluish-green: #009E73;
+            --wong-yellow: #F0E442;
+            --wong-blue: #0072B2;
+            --wong-vermillion: #D55E00;
+            --wong-reddish-purple: #CC79A7;
+            --wong-black: #000000;
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F8F9FA;
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --text-muted: #6C757D;
+            --border-color: #DEE2E6;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--wong-blue) 0%, #004d80 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 10px; }
+        .header .subtitle { font-size: 1rem; opacity: 0.9; max-width: 900px; margin: 0 auto; }
+        .header .paper-info {
+            margin-top: 20px;
+            padding: 15px 25px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding: 15px 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+        
+        .nav-tab {
+            padding: 10px 14px;
+            border: 2px solid var(--border-color);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+        }
+        
+        .nav-tab:hover { border-color: var(--wong-blue); color: var(--wong-blue); }
+        .nav-tab.active { background: var(--wong-blue); border-color: var(--wong-blue); color: white; }
+        
+        .main-content { max-width: 1500px; margin: 0 auto; padding: 30px 20px; }
+        
+        .section { display: none; animation: fadeIn 0.3s ease; }
+        .section.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-header { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid var(--border-color); }
+        .section-header h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 8px; }
+        .section-header p { color: var(--text-muted); font-size: 0.95rem; }
+        
+        #timeline-container, #ml-timeline-container, #pe-timeline-container {
+            height: 550px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+        
+        .timeline-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+        
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--text-secondary); }
+        .legend-color { width: 14px; height: 14px; border-radius: 3px; }
+        
+        .timeline-controls { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+        
+        .control-btn {
+            padding: 7px 14px;
+            border: 1px solid var(--border-color);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .control-btn:hover { background: var(--bg-secondary); border-color: var(--wong-blue); }
+        
+        .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 25px; }
+        
+        .chart-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        
+        .chart-card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 5px; }
+        .chart-card .card-subtitle { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px; }
+        .chart-container { height: 380px; }
+        
+        /* Button styles */
+        .help-btn, .download-btn {
+            background: var(--wong-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            margin-right: 10px;
+            transition: all 0.2s;
+        }
+        
+        .help-btn:hover, .download-btn:hover { background: #005a8c; transform: translateY(-1px); }
+        
+        .download-btn { background: var(--wong-bluish-green); }
+        .download-btn:hover { background: #007a5a; }
+        
+        .download-all-btn {
+            background: var(--wong-vermillion);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+            transition: all 0.2s;
+        }
+        
+        .download-all-btn:hover { background: #b84d00; transform: translateY(-1px); }
+        
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-overlay.open { display: flex; }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 850px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+        
+        .modal-header {
+            background: var(--wong-blue);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+        }
+        
+        .modal-header h3 { font-size: 1.2rem; font-weight: 600; }
+        
+        .modal-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.3rem;
+        }
+        
+        .modal-body { padding: 25px; }
+        .modal-body h4 { color: var(--wong-blue); margin: 20px 0 10px; font-size: 1.05rem; }
+        .modal-body h4:first-child { margin-top: 0; }
+        .modal-body p, .modal-body li { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7; }
+        .modal-body ul { padding-left: 20px; margin: 10px 0; }
+        .modal-body li { margin-bottom: 8px; }
+        
+        .metric-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+        
+        .metric-good { background: #D4EDDA; color: #155724; }
+        .metric-moderate { background: #FFF3CD; color: #856404; }
+        .metric-note { background: #E2E3E5; color: #383D41; }
+        .metric-warning { background: #F8D7DA; color: #721C24; }
+        
+        /* Detail Panel */
+        .detail-panel {
+            position: fixed;
+            top: 0;
+            right: -500px;
+            width: 500px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .detail-panel.open { right: 0; }
+        
+        .detail-panel-header {
+            position: sticky;
+            top: 0;
+            background: var(--wong-blue);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .detail-panel-header h3 { font-size: 1.1rem; font-weight: 600; }
+        
+        .close-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .detail-panel-content { padding: 25px; }
+        
+        .detail-year {
+            display: inline-block;
+            background: var(--wong-blue);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .detail-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 15px; line-height: 1.4; }
+        .detail-description { color: var(--text-secondary); margin-bottom: 20px; font-size: 0.95rem; line-height: 1.7; }
+        
+        .detail-citation {
+            background: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--wong-blue);
+            margin-bottom: 15px;
+        }
+        
+        .detail-citation-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .detail-citation-text { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+        
+        .detail-doi {
+            display: inline-block;
+            margin-top: 10px;
+            color: var(--wong-blue);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .detail-doi:hover { text-decoration: underline; }
+        
+        .detail-category {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 15px;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .overlay.open { opacity: 1; visibility: visible; }
+        
+        /* Tables */
+        .data-table-container { overflow-x: auto; margin-top: 25px; }
+        
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .data-table th, .data-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .data-table th { background: var(--bg-secondary); font-weight: 600; position: sticky; top: 0; }
+        .data-table tr:hover { background: var(--bg-secondary); }
+        .data-table a { color: var(--wong-blue); text-decoration: none; }
+        .data-table a:hover { text-decoration: underline; }
+        
+        .highlight-row { background: #E8F5E9 !important; }
+        .highlight-cell { font-weight: 700; color: var(--wong-bluish-green); }
+        .warning-cell { font-weight: 700; color: var(--wong-vermillion); }
+        
+        /* Info boxes */
+        .info-box {
+            padding: 18px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .info-box.warning { background: #FFF3CD; border-left: 4px solid var(--wong-orange); }
+        .info-box.success { background: #D4EDDA; border-left: 4px solid var(--wong-bluish-green); }
+        .info-box.info { background: #D1ECF1; border-left: 4px solid var(--wong-sky-blue); }
+        .info-box.danger { background: #F8D7DA; border-left: 4px solid var(--wong-vermillion); }
+        
+        .info-box strong { display: block; margin-bottom: 5px; }
+        
+        /* Subsection tabs */
+        .subsection-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .subsection-tab {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            border-radius: 6px 6px 0 0;
+            transition: all 0.2s;
+        }
+        
+        .subsection-tab:hover { color: var(--wong-blue); background: var(--bg-secondary); }
+        .subsection-tab.active { color: var(--wong-blue); background: var(--bg-secondary); border-bottom: 2px solid var(--wong-blue); margin-bottom: -12px; }
+        
+        .subsection { display: none; }
+        .subsection.active { display: block; }
+        
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            padding: 30px 20px;
+            margin-top: 50px;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .footer p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px; }
+        .footer a { color: var(--wong-blue); text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.4rem; }
+            .chart-grid { grid-template-columns: 1fr; }
+            .detail-panel { width: 100%; right: -100%; }
+            #timeline-container, #ml-timeline-container, #pe-timeline-container { height: 450px; }
+            .nav-tab { padding: 8px 10px; font-size: 0.75rem; }
+        }
+        
+        /* Vis.js overrides */
+        .vis-item { border-radius: 5px !important; font-size: 11px !important; font-weight: 500 !important; border-width: 0 !important; }
+        .vis-item.vis-selected { box-shadow: 0 0 0 3px rgba(0,0,0,0.2) !important; }
+        .vis-label { font-weight: 600 !important; font-size: 12px !important; }
+        
+        /* Technical challenges callout */
+        .challenge-box {
+            background: linear-gradient(135deg, #FFF3CD 0%, #FFE8A1 100%);
+            border: 2px solid var(--wong-orange);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .challenge-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>Computational Transformation of Stem Cell Engineering</h1>
+        <p class="subtitle">Interactive Timeline & Benchmark Visualizations: Classical ML, Foundation Models, Preeclampsia Applications & Organoid Research (2000-2026)</p>
+        <div class="paper-info">
+            <strong>Supplementary Figures</strong> | Nature Methods Review | Bantu R. (2025)<br>
+            <small>Syracuse University, Department of Biomedical Engineering & Bioinformatics</small>
+        </div>
+    </header>
+    
+    <nav class="nav-tabs">
+        <button class="nav-tab active" data-section="timeline">📅 Methods Timeline</button>
+        <button class="nav-tab" data-section="classical-ml">🔬 Classical ML</button>
+        <button class="nav-tab" data-section="foundation">🧠 Foundation Models</button>
+        <button class="nav-tab" data-section="preeclampsia">🤰 Preeclampsia</button>
+        <button class="nav-tab" data-section="comparison">⚖️ ML vs FM</button>
+        <button class="nav-tab" data-section="benchmarks">📊 Benchmarks</button>
+        <button class="nav-tab" data-section="downloads">⬇️ Downloads</button>
+        <button class="nav-tab" data-section="about">ℹ️ About</button>
+    </nav>
+    
+    <main class="main-content">
+        <!-- Timeline Section -->
+        <section id="timeline" class="section active">
+            <div class="section-header">
+                <h2>Evolution of Computational Methods in Stem Cell Biology (2000-2026)</h2>
+                <p>Click any milestone for details, citations, and DOI links. Scroll to zoom, drag to pan.</p>
+            </div>
+            
+            <div class="timeline-legend">
+                <div class="legend-item"><div class="legend-color" style="background: #E69F00;"></div><span>Single-Cell Tech</span></div>
+                <div class="legend-item"><div class="legend-color" style="background: #0072B2;"></div><span>Analysis Tools</span></div>
+                <div class="legend-item"><div class="legend-color" style="background: #009E73;"></div><span>Organoids</span></div>
+                <div class="legend-item"><div class="legend-color" style="background: #D55E00;"></div><span>Spatial</span></div>
+                <div class="legend-item"><div class="legend-color" style="background: #CC79A7;"></div><span>Foundation Models</span></div>
+                <div class="legend-item"><div class="legend-color" style="background: #56B4E9;"></div><span>Cell Atlases</span></div>
+            </div>
+            
+            <div class="timeline-controls">
+                <button class="control-btn" id="btn-fit">🔍 Fit All</button>
+                <button class="control-btn" data-range="2000-2010">2000-2010</button>
+                <button class="control-btn" data-range="2010-2015">2010-2015</button>
+                <button class="control-btn" data-range="2015-2020">2015-2020</button>
+                <button class="control-btn" data-range="2020-2026">2020-2026</button>
+            </div>
+            
+            <div id="timeline-container"><div class="loading">Loading timeline...</div></div>
+        </section>
+        
+        <!-- Classical ML Section -->
+        <section id="classical-ml" class="section">
+            <div class="section-header">
+                <h2>Classical Machine Learning in Single-Cell RNA Sequencing</h2>
+                <p>Comprehensive overview of ML methods for clustering, classification, dimensionality reduction, batch correction, and trajectory inference (2007-2026).</p>
+            </div>
+            
+            <div class="subsection-tabs">
+                <button class="subsection-tab active" data-subsection="ml-timeline">📅 ML Timeline</button>
+                <button class="subsection-tab" data-subsection="ml-clustering">🔵 Clustering</button>
+                <button class="subsection-tab" data-subsection="ml-classification">🏷️ Classification</button>
+                <button class="subsection-tab" data-subsection="ml-dimred">📉 Dim. Reduction</button>
+                <button class="subsection-tab" data-subsection="ml-batch">🔄 Batch Correction</button>
+                <button class="subsection-tab" data-subsection="ml-trajectory">🛤️ Trajectory</button>
+            </div>
+            
+            <!-- ML Timeline Subsection -->
+            <div id="ml-timeline" class="subsection active">
+                <div class="timeline-legend">
+                    <div class="legend-item"><div class="legend-color" style="background: #0072B2;"></div><span>Clustering</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: #E69F00;"></div><span>Classification</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: #009E73;"></div><span>Dim. Reduction</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: #D55E00;"></div><span>Batch Correction</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: #CC79A7;"></div><span>Trajectory</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: #56B4E9;"></div><span>Benchmarks</span></div>
+                </div>
+                
+                <div class="timeline-controls">
+                    <button class="control-btn" id="btn-ml-fit">🔍 Fit All</button>
+                    <button class="control-btn" data-ml-range="2005-2015">2005-2015</button>
+                    <button class="control-btn" data-ml-range="2015-2020">2015-2020</button>
+                    <button class="control-btn" data-ml-range="2020-2026">2020-2026</button>
+                </div>
+                
+                <div id="ml-timeline-container"><div class="loading">Loading ML timeline...</div></div>
+            </div>
+            
+            <!-- Clustering Subsection -->
+            <div id="ml-clustering" class="subsection">
+                <button class="help-btn" onclick="openModal('clustering-help')">❓ How to Read These Charts</button>
+                <button class="download-btn" onclick="downloadChart('chart-clustering-ari', 'clustering_ARI_benchmark')">⬇️ Download PNG</button>
+                
+                <div class="chart-grid">
+                    <div class="chart-card">
+                        <h3>Clustering Methods Benchmark (ARI Scores)</h3>
+                        <p class="card-subtitle">Adjusted Rand Index across benchmark datasets (Duò et al. 2018, F1000Research)</p>
+                        <div id="chart-clustering-ari" class="chart-container"></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Clustering Performance Radar</h3>
+                        <p class="card-subtitle">Multi-metric comparison: ARI, NMI, Homogeneity, Completeness</p>
+                        <div id="chart-clustering-radar" class="chart-container"></div>
+                    </div>
+                </div>
+                
+                <div class="info-box success">
+                    <strong>✅ Key Finding: Leiden is the current gold standard</strong>
+                    The Leiden algorithm (Traag et al., Sci Rep 2019) guarantees connected communities and consistently outperforms Louvain across benchmarks. SC3 achieves highest accuracy on small datasets but doesn't scale beyond ~10,000 cells.
+                </div>
+                
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Method</th><th>Year</th><th>Algorithm</th><th>Complexity</th><th>Scalability</th><th>Citation</th><th>DOI</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>k-means</strong></td><td>1979</td><td>Centroid-based</td><td>O(nk)</td><td>Millions</td><td>Hartigan & Wong, Applied Statistics</td><td><a href="https://doi.org/10.2307/2346830" target="_blank">10.2307/2346830</a></td></tr>
+                            <tr><td><strong>Louvain</strong></td><td>2008</td><td>Modularity optimization</td><td>O(n log n)</td><td>Millions</td><td>Blondel et al., J Stat Mech 2008</td><td><a href="https://doi.org/10.1088/1742-5468/2008/10/P10008" target="_blank">10.1088/1742-5468/2008/10/P10008</a></td></tr>
+                            <tr class="highlight-row"><td><strong>Leiden</strong></td><td>2019</td><td>Refined modularity</td><td>O(n log n)</td><td>Millions</td><td>Traag et al., Scientific Reports 2019</td><td><a href="https://doi.org/10.1038/s41598-019-41695-z" target="_blank">10.1038/s41598-019-41695-z</a></td></tr>
+                            <tr><td><strong>SC3</strong></td><td>2017</td><td>Consensus clustering</td><td>O(n²)</td><td>~10,000</td><td>Kiselev et al., Nature Methods 2017</td><td><a href="https://doi.org/10.1038/nmeth.4236" target="_blank">10.1038/nmeth.4236</a></td></tr>
+                            <tr><td><strong>SIMLR</strong></td><td>2017</td><td>Learned similarity</td><td>O(n²)</td><td>~50,000</td><td>Wang et al., Nature Methods 2017</td><td><a href="https://doi.org/10.1038/nmeth.4207" target="_blank">10.1038/nmeth.4207</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Classification Subsection -->
+            <div id="ml-classification" class="subsection">
+                <button class="help-btn" onclick="openModal('classification-help')">❓ How to Read These Charts</button>
+                <button class="download-btn" onclick="downloadChart('chart-classification-f1', 'classification_F1_benchmark')">⬇️ Download PNG</button>
+                
+                <div class="chart-grid">
+                    <div class="chart-card">
+                        <h3>Cell Type Classification Benchmark</h3>
+                        <p class="card-subtitle">F1-scores across 27 datasets (Abdelaal et al. 2019, Genome Biology)</p>
+                        <div id="chart-classification-f1" class="chart-container"></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Classifier Performance Radar</h3>
+                        <p class="card-subtitle">Accuracy, F1, Precision, Recall, Speed</p>
+                        <div id="chart-classification-radar" class="chart-container"></div>
+                    </div>
+                </div>
+                
+                <div class="info-box success">
+                    <strong>✅ Key Finding: SVM with rejection is the top performer</strong>
+                    In the comprehensive Abdelaal et al. (2019) benchmark of 22 methods on 27 datasets, SVM with rejection capability achieved the best overall performance with median F1 > 0.96. Neural networks did NOT outperform classical methods.
+                </div>
+                
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Method</th><th>Year</th><th>Algorithm</th><th>Median F1</th><th>Key Strength</th><th>Citation</th><th>DOI</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr class="highlight-row"><td><strong>SVM (rejection)</strong></td><td>-</td><td>Support Vector Machine</td><td class="highlight-cell">>0.96</td><td>Best overall</td><td>Abdelaal et al., Genome Biol 2019</td><td><a href="https://doi.org/10.1186/s13059-019-1795-z" target="_blank">10.1186/s13059-019-1795-z</a></td></tr>
+                            <tr><td><strong>Random Forest</strong></td><td>2001</td><td>Ensemble trees</td><td>>0.90</td><td>Feature importance</td><td>Breiman, Machine Learning 2001</td><td><a href="https://doi.org/10.1023/A:1010933404324" target="_blank">10.1023/A:1010933404324</a></td></tr>
+                            <tr><td><strong>scPred</strong></td><td>2019</td><td>SVM + SVD</td><td>0.99</td><td>Tumor classification</td><td>Alquicira-Hernandez et al., Genome Biol 2019</td><td><a href="https://doi.org/10.1186/s13059-019-1862-5" target="_blank">10.1186/s13059-019-1862-5</a></td></tr>
+                            <tr><td><strong>SingleR</strong></td><td>2019</td><td>Correlation-based</td><td>>0.85</td><td>Reference-based</td><td>Aran et al., Nature Immunology 2019</td><td><a href="https://doi.org/10.1038/s41590-018-0276-y" target="_blank">10.1038/s41590-018-0276-y</a></td></tr>
+                            <tr><td><strong>CellTypist</strong></td><td>2022</td><td>Logistic Regression</td><td>0.93</td><td>Immune cells</td><td>Domínguez Conde et al., Science 2022</td><td><a href="https://doi.org/10.1126/science.abl5197" target="_blank">10.1126/science.abl5197</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Dimensionality Reduction Subsection -->
+            <div id="ml-dimred" class="subsection">
+                <button class="help-btn" onclick="openModal('dimred-help')">❓ How to Read These Charts</button>
+                <button class="download-btn" onclick="downloadChart('chart-dimred-radar', 'dimred_comparison')">⬇️ Download PNG</button>
+                
+                <div class="chart-grid">
+                    <div class="chart-card">
+                        <h3>Dimensionality Reduction Comparison</h3>
+                        <p class="card-subtitle">Structure preservation vs computational efficiency</p>
+                        <div id="chart-dimred-comparison" class="chart-container"></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Method Characteristics Radar</h3>
+                        <p class="card-subtitle">Local structure, Global structure, Speed, Scalability, Reproducibility</p>
+                        <div id="chart-dimred-radar" class="chart-container"></div>
+                    </div>
+                </div>
+                
+                <div class="info-box info">
+                    <strong>ℹ️ Best Practice: PCA → UMAP pipeline</strong>
+                    The standard workflow uses PCA (30-50 components) for preprocessing, followed by UMAP for visualization. UMAP (Becht et al., Nature Biotechnology 2019) is 10-100× faster than t-SNE while better preserving global structure.
+                </div>
+            </div>
+            
+            <!-- Batch Correction Subsection -->
+            <div id="ml-batch" class="subsection">
+                <button class="help-btn" onclick="openModal('batch-help')">❓ How to Read These Charts</button>
+                <button class="download-btn" onclick="downloadChart('chart-batch-scatter', 'batch_correction_benchmark')">⬇️ Download PNG</button>
+                
+                <div class="chart-grid">
+                    <div class="chart-card">
+                        <h3>Batch Correction Benchmark (scIB)</h3>
+                        <p class="card-subtitle">Batch removal vs Bio conservation (Luecken et al. 2022, Nature Methods)</p>
+                        <div id="chart-batch-scatter" class="chart-container"></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Integration Methods Radar</h3>
+                        <p class="card-subtitle">kBET, iLISI, ASW, NMI, ARI metrics</p>
+                        <div id="chart-batch-radar" class="chart-container"></div>
+                    </div>
+                </div>
+                
+                <div class="info-box success">
+                    <strong>✅ Key Finding: Harmony offers best speed-performance balance</strong>
+                    Harmony (Korsunsky et al., Nature Methods 2019) integrates ~10⁶ cells in minutes on a personal computer. For complex tasks with cell type labels, scANVI (semi-supervised scVI) achieves best overall performance.
+                </div>
+            </div>
+            
+            <!-- Trajectory Inference Subsection -->
+            <div id="ml-trajectory" class="subsection">
+                <button class="help-btn" onclick="openModal('trajectory-help')">❓ How to Read These Charts</button>
+                <button class="download-btn" onclick="downloadChart('chart-trajectory-bar', 'trajectory_inference_benchmark')">⬇️ Download PNG</button>
+                
+                <div class="chart-grid">
+                    <div class="chart-card">
+                        <h3>Trajectory Inference Benchmark</h3>
+                        <p class="card-subtitle">Performance by topology (Saelens et al. 2019, Nature Biotechnology)</p>
+                        <div id="chart-trajectory-bar" class="chart-container"></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Method Capabilities Radar</h3>
+                        <p class="card-subtitle">Linear, Bifurcation, Tree, Complex, Scalability</p>
+                        <div id="chart-trajectory-radar" class="chart-container"></div>
+                    </div>
+                </div>
+                
+                <div class="info-box info">
+                    <strong>ℹ️ Method selection depends on expected topology</strong>
+                    Slingshot (Street et al., BMC Genomics 2018) excels for tree-shaped trajectories; PAGA (Wolf et al., Genome Biology 2019) handles complex/disconnected structures; RNA velocity (La Manno et al., Nature 2018) uniquely provides directional information.
+                </div>
+            </div>
+        </section>
+        
+        <!-- Foundation Models Section -->
+        <section id="foundation" class="section">
+            <div class="section-header">
+                <h2>Foundation Models for Single-Cell Analysis</h2>
+                <p>Deep learning foundation models trained on millions of cells for transfer learning applications.</p>
+            </div>
+            
+            <button class="help-btn" onclick="openModal('radar-help')">❓ How to Read Radar Charts</button>
+            <button class="download-btn" onclick="downloadChart('radar-overall', 'foundation_model_comparison')">⬇️ Download PNG</button>
+            
+            <div class="chart-grid">
+                <div class="chart-card">
+                    <h3>Overall Performance Comparison</h3>
+                    <p class="card-subtitle">scGPT vs Geneformer vs scFoundation vs Baselines</p>
+                    <div id="radar-overall" class="chart-container"></div>
+                </div>
+                <div class="chart-card">
+                    <h3>Zero-Shot vs Fine-Tuned</h3>
+                    <p class="card-subtitle">Performance gap without task-specific training (Kedzierska et al. 2025)</p>
+                    <div id="radar-zeroshot" class="chart-container"></div>
+                </div>
+                <div class="chart-card">
+                    <h3>Perturbation Prediction</h3>
+                    <p class="card-subtitle">Pearson Delta correlation (Csendes et al. 2025, BMC Genomics)</p>
+                    <div id="radar-perturbation" class="chart-container"></div>
+                </div>
+                <div class="chart-card">
+                    <h3>Model Scalability</h3>
+                    <p class="card-subtitle">Resource requirements by model size</p>
+                    <div id="radar-scalability" class="chart-container"></div>
+                </div>
+            </div>
+            
+            <div class="info-box warning">
+                <strong>⚠️ Critical Finding: Baselines often outperform foundation models</strong>
+                Simple methods (Train Mean, RF + GO features) frequently exceed foundation model performance on perturbation prediction (Csendes et al., BMC Genomics 2025). The Kedzierska et al. (2025, Genome Biology) zero-shot evaluation revealed limited reliability without fine-tuning.
+            </div>
+            
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead><tr><th>Model</th><th>Year</th><th>Parameters</th><th>Training Cells</th><th>Architecture</th><th>Citation</th><th>DOI</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Geneformer</strong></td><td>2023</td><td>10-106M</td><td>30-104M</td><td>BERT</td><td>Theodoris et al., Nature 2023</td><td><a href="https://doi.org/10.1038/s41586-023-06139-9" target="_blank">10.1038/s41586-023-06139-9</a></td></tr>
+                        <tr><td><strong>scGPT</strong></td><td>2024</td><td>~51M</td><td>33M</td><td>GPT</td><td>Cui et al., Nature Methods 2024</td><td><a href="https://doi.org/10.1038/s41592-024-02201-0" target="_blank">10.1038/s41592-024-02201-0</a></td></tr>
+                        <tr><td><strong>scFoundation</strong></td><td>2024</td><td>100M</td><td>50M</td><td>Asymmetric Transformer</td><td>Hao et al., Nature Methods 2024</td><td><a href="https://doi.org/10.1038/s41592-024-02305-7" target="_blank">10.1038/s41592-024-02305-7</a></td></tr>
+                        <tr><td><strong>UCE</strong></td><td>2024</td><td>650M</td><td>36M (multi-species)</td><td>ESM-2</td><td>Rosen et al., bioRxiv 2023</td><td><a href="https://doi.org/10.1101/2023.11.28.568918" target="_blank">10.1101/2023.11.28.568918</a></td></tr>
+                        <tr><td><strong>CellFM</strong></td><td>2025</td><td>800M</td><td>100M</td><td>RetNet</td><td>Wang et al., Nature Comm 2025</td><td><a href="https://doi.org/10.1038/s41467-025-59926-5" target="_blank">10.1038/s41467-025-59926-5</a></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Preeclampsia Section -->
+        <section id="preeclampsia" class="section">
+            <div class="section-header">
+                <h2>Preeclampsia: scRNA-seq and Machine Learning Applications</h2>
+                <p>Single-cell transcriptomics and computational approaches for understanding and predicting preeclampsia.</p>
+            </div>
+            
+            <div class="subsection-tabs">
+                <button class="subsection-tab active" data-subsection="pe-overview">📋 Overview</button>
+                <button class="subsection-tab" data-subsection="pe-timeline">📅 PE Timeline</button>
+                <button class="subsection-tab" data-subsection="pe-ml">🤖 ML Applications</button>
+                <button class="subsection-tab" data-subsection="pe-challenges">⚠️ Technical Challenges</button>
+            </div>
+            
+            <!-- PE Overview -->
+            <div id="pe-overview" class="subsection active">
+                <div class="chart-grid">
+                    <div class="chart-card">
+                        <h3>Key Placental scRNA-seq Studies</h3>
+                        <p class="card-subtitle">Landmark studies characterizing the maternal-fetal interface</p>
+                        <div class="data-table-container" style="margin-top: 0;">
+                            <table class="data-table">
+                                <thead><tr><th>Study</th><th>Year</th><th>Cells</th><th>Key Contribution</th><th>DOI</th></tr></thead>
+                                <tbody>
+                                    <tr class="highlight-row"><td><strong>Vento-Tormo et al.</strong></td><td>2018</td><td>~70,000</td><td>First maternal-fetal interface atlas; CellPhoneDB</td><td><a href="https://doi.org/10.1038/s41586-018-0698-6" target="_blank">10.1038/s41586-018-0698-6</a></td></tr>
+                                    <tr><td><strong>Turco et al.</strong></td><td>2018</td><td>Organoids</td><td>First trophoblast organoids from placenta</td><td><a href="https://doi.org/10.1038/s41586-018-0753-3" target="_blank">10.1038/s41586-018-0753-3</a></td></tr>
+                                    <tr><td><strong>Pique-Regi et al.</strong></td><td>2019</td><td>~8,000</td><td>Cell-type-specific signatures in preeclampsia</td><td><a href="https://doi.org/10.1016/j.ajog.2019.08.032" target="_blank">10.1016/j.ajog.2019.08.032</a></td></tr>
+                                    <tr><td><strong>Wang et al.</strong></td><td>2022</td><td>~50,000</td><td>Full-term placenta heterogeneity; TPLCs</td><td><a href="https://doi.org/10.1038/s41598-022-14516-z" target="_blank">10.1038/s41598-022-14516-z</a></td></tr>
+                                    <tr><td><strong>Liu et al.</strong></td><td>2024</td><td>101,543</td><td>snRNA-seq + snATAC-seq of STB nuclei</td><td><a href="https://doi.org/10.1038/s41588-023-01647-w" target="_blank">10.1038/s41588-023-01647-w</a></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Preeclampsia ML Prediction Performance</h3>
+                        <p class="card-subtitle">Machine learning models for PE risk assessment</p>
+                        <div id="chart-pe-ml-performance" class="chart-container"></div>
+                    </div>
+                </div>
+                
+                <div class="info-box info">
+                    <strong>ℹ️ Key Datasets for Preeclampsia Research</strong>
+                    <ul style="margin-top: 10px; padding-left: 20px;">
+                        <li><strong>E-MTAB-6701:</strong> Vento-Tormo maternal-fetal interface (~70K cells)</li>
+                        <li><strong>GSE189504:</strong> Early-onset PE placental samples</li>
+                        <li><strong>GSE167363:</strong> PE vs control placental transcriptomes</li>
+                        <li><strong>GSE173193:</strong> Preeclampsia PBMC immune profiles</li>
+                        <li><strong>EGAS00001002449:</strong> Healthy pregnancy placenta (20,518 cells)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- PE Timeline -->
+            <div id="pe-timeline" class="subsection">
+                <div class="timeline-legend">
+                    <div class="legend-item"><div class="legend-color" style="background: #009E73;"></div><span>Placental Atlas</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: #0072B2;"></div><span>ML/Prediction</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: #D55E00;"></div><span>PE scRNA-seq</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: #CC79A7;"></div><span>Organoids</span></div>
+                </div>
+                
+                <div class="timeline-controls">
+                    <button class="control-btn" id="btn-pe-fit">🔍 Fit All</button>
+                </div>
+                
+                <div id="pe-timeline-container"><div class="loading">Loading preeclampsia timeline...</div></div>
+            </div>
+            
+            <!-- PE ML Applications -->
+            <div id="pe-ml" class="subsection">
+                <button class="help-btn" onclick="openModal('pe-ml-help')">❓ How to Interpret PE Prediction Models</button>
+                <button class="download-btn" onclick="downloadChart('chart-pe-methods', 'preeclampsia_ml_methods')">⬇️ Download PNG</button>
+                
+                <div class="chart-grid">
+                    <div class="chart-card">
+                        <h3>ML Methods for PE Prediction</h3>
+                        <p class="card-subtitle">Comparison of algorithms across studies</p>
+                        <div id="chart-pe-methods" class="chart-container"></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Biomarker Discovery Approaches</h3>
+                        <p class="card-subtitle">Feature selection and gene signature identification</p>
+                        <div id="chart-pe-biomarkers" class="chart-container"></div>
+                    </div>
+                </div>
+                
+                <div class="info-box success">
+                    <strong>✅ Key ML Applications in Preeclampsia</strong>
+                    <ul style="margin-top: 10px; padding-left: 20px;">
+                        <li><strong>TURF + XGBoost:</strong> 92.61% accuracy for cell subpopulation classification (Wang et al., Cell & Bioscience 2023)</li>
+                        <li><strong>Cell-type-specific models:</strong> Four ML models for diagnostic indicators from circulating immune cells (Comm Biol 2024)</li>
+                        <li><strong>LASSO/RF ensemble:</strong> Immune-derived molecular markers with high AUC (Sci Rep 2025)</li>
+                        <li><strong>Mendelian randomization + scRNA-seq:</strong> Identifying causal genes (IFITM3, NINJ1, COTL1)</li>
+                    </ul>
+                </div>
+                
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead><tr><th>Study</th><th>Method</th><th>Data Type</th><th>Performance</th><th>Key Finding</th><th>DOI</th></tr></thead>
+                        <tbody>
+                            <tr class="highlight-row"><td>Wang et al. 2023</td><td>TURF + XGBoost</td><td>scRNA-seq</td><td class="highlight-cell">Acc: 92.6%</td><td>Cell subpop. risk prediction</td><td><a href="https://doi.org/10.1186/s13578-023-00991-y" target="_blank">10.1186/s13578-023-00991-y</a></td></tr>
+                            <tr><td>Li et al. 2024</td><td>XGBoost, RF, LASSO</td><td>Bulk + scRNA-seq</td><td>AUC: 0.83-0.91</td><td>Immune cell diagnostic markers</td><td><a href="https://doi.org/10.1038/s42003-023-05669-2" target="_blank">10.1038/s42003-023-05669-2</a></td></tr>
+                            <tr><td>Li et al. 2024</td><td>VC Algorithm</td><td>Clinical + biomarkers</td><td>AUC: 0.831</td><td>Population-based prediction</td><td><a href="https://doi.org/10.3389/fendo.2024.1345573" target="_blank">10.3389/fendo.2024.1345573</a></td></tr>
+                            <tr><td>Zhong et al. 2024</td><td>MR + scRNA-seq</td><td>GWAS + scRNA-seq</td><td>-</td><td>Causal genes: IFITM3, NINJ1</td><td><a href="https://doi.org/10.3389/fgene.2024.1372164" target="_blank">10.3389/fgene.2024.1372164</a></td></tr>
+                            <tr><td>Sci Rep 2025</td><td>LASSO, Bagged Trees, RF</td><td>GEO bulk</td><td>High specificity</td><td>Immune-derived markers</td><td><a href="https://doi.org/10.1038/s41598-025-86442-9" target="_blank">10.1038/s41598-025-86442-9</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- PE Technical Challenges -->
+            <div id="pe-challenges" class="subsection">
+                <div class="challenge-box">
+                    <h4>⚠️ The Syncytiotrophoblast (SCT) Blind Spot</h4>
+                    <p>Syncytiotrophoblasts are systematically <strong>undersampled</strong> in standard scRNA-seq workflows due to their multinucleated nature. This creates significant technical bias in placental studies.</p>
+                </div>
+                
+                <div class="chart-grid">
+                    <div class="chart-card">
+                        <h3>scRNA-seq vs snRNA-seq for Placenta</h3>
+                        <p class="card-subtitle">Sampling efficiency comparison</p>
+                        <div id="chart-sct-sampling" class="chart-container"></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Cell Type Detection Sensitivity</h3>
+                        <p class="card-subtitle">Gene/molecule detection by method</p>
+                        <div id="chart-sct-sensitivity" class="chart-container"></div>
+                    </div>
+                </div>
+                
+                <div class="info-box danger">
+                    <strong>🔬 Critical Technical Consideration</strong>
+                    <p style="margin-top: 10px;">Recent work by Pique-Regi et al. (Placenta 2024) demonstrated:</p>
+                    <ul style="margin-top: 10px; padding-left: 20px;">
+                        <li>Mature STB captured <strong>~50× more efficiently</strong> after nuclei extraction vs cell extraction</li>
+                        <li>However, scRNA-seq is <strong>more sensitive</strong> for detecting genes, molecules, and mature transcripts</li>
+                        <li>snRNA-seq suffers from <strong>ambient trophoblast contamination</strong> across all cell classes</li>
+                        <li>EVT, stroma, vasculature, and immune cells are <strong>less comprehensively profiled</strong> by snRNA-seq</li>
+                    </ul>
+                    <p style="margin-top: 10px;"><strong>Recommendation:</strong> Use complementary approaches - scRNA-seq for comprehensive profiling + snRNA-seq for STB representation.</p>
+                </div>
+                
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead><tr><th>Challenge</th><th>Cause</th><th>Impact</th><th>Solution</th><th>Reference</th></tr></thead>
+                        <tbody>
+                            <tr><td>STB undersampling</td><td>Multinucleated cells</td><td>Missing 50%+ of syncytium</td><td>snRNA-seq or spatial methods</td><td>Barrozo et al., BJOG 2022</td></tr>
+                            <tr><td>Dissociation bias</td><td>Enzymatic digestion</td><td>Cell type loss/stress</td><td>Protocol optimization</td><td>Zhou et al., Front Endocrinol 2024</td></tr>
+                            <tr><td>Marker overlap</td><td>CTB/STB similarity</td><td>Misclassification</td><td>Refined marker panels</td><td>Hum Reprod Update 2024</td></tr>
+                            <tr><td>Doublet filtering</td><td>STB size</td><td>STB removed as doublets</td><td>Adjusted QC thresholds</td><td>Liu et al., Nat Genet 2024</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Comparison Section -->
+        <section id="comparison" class="section">
+            <div class="section-header">
+                <h2>Classical ML vs Foundation Models: Head-to-Head Comparison</h2>
+                <p>Systematic benchmarks comparing traditional machine learning approaches with deep learning foundation models.</p>
+            </div>
+            
+            <button class="help-btn" onclick="openModal('comparison-help')">❓ How to Interpret These Comparisons</button>
+            <button class="download-btn" onclick="downloadChart('chart-annotation-comparison', 'ml_vs_fm_annotation')">⬇️ Download PNG</button>
+            
+            <div class="chart-grid">
+                <div class="chart-card">
+                    <h3>Cell Type Annotation: Classical ML vs Foundation Models</h3>
+                    <p class="card-subtitle">F1-scores on benchmark datasets</p>
+                    <div id="chart-annotation-comparison" class="chart-container"></div>
+                </div>
+                <div class="chart-card">
+                    <h3>Perturbation Prediction: All Methods</h3>
+                    <p class="card-subtitle">Classical ML vs Foundation Models (Csendes et al. 2025)</p>
+                    <div id="chart-perturbation-comparison" class="chart-container"></div>
+                </div>
+                <div class="chart-card">
+                    <h3>Batch Integration Performance</h3>
+                    <p class="card-subtitle">Classical (Harmony, MNN) vs Deep Learning (scVI, scANVI)</p>
+                    <div id="chart-integration-comparison" class="chart-container"></div>
+                </div>
+                <div class="chart-card">
+                    <h3>Computational Efficiency</h3>
+                    <p class="card-subtitle">Runtime vs Accuracy trade-off</p>
+                    <div id="chart-efficiency-comparison" class="chart-container"></div>
+                </div>
+            </div>
+            
+            <div class="info-box success">
+                <strong>✅ Evidence-Based Decision Framework for Method Selection</strong>
+                <ul style="margin-top: 10px; padding-left: 20px;">
+                    <li><strong>Small datasets (&lt;10K cells):</strong> Classical ML (SVM, RF) typically superior</li>
+                    <li><strong>Large datasets (&gt;100K cells):</strong> Deep learning (scVI) offers scalability</li>
+                    <li><strong>Batch correction:</strong> Harmony for speed; scANVI for complex tasks (Luecken et al. 2022)</li>
+                    <li><strong>Perturbation prediction:</strong> RF + GO features outperforms all FMs (Csendes et al. 2025)</li>
+                    <li><strong>Interpretability required:</strong> RF, Logistic Regression, SVM</li>
+                    <li><strong>Zero-shot cross-species:</strong> UCE is uniquely capable</li>
+                    <li><strong>Resource-constrained:</strong> Classical methods require no GPU</li>
+                </ul>
+            </div>
+            
+            <h3 style="margin: 30px 0 15px; font-size: 1.1rem;">Comprehensive Benchmark Summary</h3>
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Task</th><th>Best Classical ML</th><th>Best Foundation Model</th><th>Winner</th><th>Evidence</th><th>DOI</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cell Type Annotation</td>
+                            <td>SVM (rejection) - F1: 0.96+</td>
+                            <td>scGPT (fine-tuned) - F1: 0.82</td>
+                            <td class="highlight-cell">Classical ML</td>
+                            <td>Abdelaal et al. 2019</td>
+                            <td><a href="https://doi.org/10.1186/s13059-019-1795-z" target="_blank">10.1186/s13059-019-1795-z</a></td>
+                        </tr>
+                        <tr>
+                            <td>Perturbation Prediction</td>
+                            <td>RF + GO - Δr: 0.739</td>
+                            <td>scGPT - Δr: 0.641</td>
+                            <td class="highlight-cell">Classical ML</td>
+                            <td>Csendes et al. 2025</td>
+                            <td><a href="https://doi.org/10.1186/s12864-025-11600-2" target="_blank">10.1186/s12864-025-11600-2</a></td>
+                        </tr>
+                        <tr>
+                            <td>Batch Integration</td>
+                            <td>Harmony - Fast, good</td>
+                            <td>scANVI - Best overall</td>
+                            <td class="warning-cell">Deep Learning</td>
+                            <td>Luecken et al. 2022</td>
+                            <td><a href="https://doi.org/10.1038/s41592-021-01336-8" target="_blank">10.1038/s41592-021-01336-8</a></td>
+                        </tr>
+                        <tr>
+                            <td>Zero-Shot Transfer</td>
+                            <td>N/A</td>
+                            <td>UCE, Geneformer</td>
+                            <td class="warning-cell">Foundation Models</td>
+                            <td>Rosen et al. 2023</td>
+                            <td><a href="https://doi.org/10.1101/2023.11.28.568918" target="_blank">10.1101/2023.11.28.568918</a></td>
+                        </tr>
+                        <tr>
+                            <td>Clustering</td>
+                            <td>Leiden - ARI: 0.85+</td>
+                            <td>scGPT embeddings + Leiden</td>
+                            <td>Comparable</td>
+                            <td>Duò et al. 2018</td>
+                            <td><a href="https://doi.org/10.12688/f1000research.15666.2" target="_blank">10.12688/f1000research.15666.2</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Benchmarks Section -->
+        <section id="benchmarks" class="section">
+            <div class="section-header">
+                <h2>Comprehensive Benchmark Datasets</h2>
+                <p>Standard evaluation datasets and benchmark studies for scRNA-seq method comparison.</p>
+            </div>
+            
+            <h3 style="margin: 20px 0 15px;">Key Benchmark Studies</h3>
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead><tr><th>Benchmark</th><th>Task</th><th>Year</th><th>Methods</th><th>Datasets</th><th>Key Finding</th><th>DOI</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Duò et al.</strong></td><td>Clustering</td><td>2018</td><td>14</td><td>9 real + 3 simulated</td><td>SC3, Seurat top performers</td><td><a href="https://doi.org/10.12688/f1000research.15666.2" target="_blank">10.12688/f1000research.15666.2</a></td></tr>
+                        <tr><td><strong>Abdelaal et al.</strong></td><td>Annotation</td><td>2019</td><td>22</td><td>27 datasets</td><td>SVM with rejection best</td><td><a href="https://doi.org/10.1186/s13059-019-1795-z" target="_blank">10.1186/s13059-019-1795-z</a></td></tr>
+                        <tr><td><strong>Saelens et al.</strong></td><td>Trajectory</td><td>2019</td><td>45</td><td>339 datasets</td><td>Slingshot, PAGA excel</td><td><a href="https://doi.org/10.1038/s41587-019-0071-9" target="_blank">10.1038/s41587-019-0071-9</a></td></tr>
+                        <tr><td><strong>Tran et al.</strong></td><td>Batch correction</td><td>2020</td><td>14</td><td>5 datasets</td><td>Harmony recommended first</td><td><a href="https://doi.org/10.1186/s13059-019-1850-9" target="_blank">10.1186/s13059-019-1850-9</a></td></tr>
+                        <tr><td><strong>Mereu et al.</strong></td><td>Protocol comparison</td><td>2020</td><td>13 protocols</td><td>Cell lines, PBMC, brain</td><td>Protocol-specific biases</td><td><a href="https://doi.org/10.1038/s41587-020-0469-4" target="_blank">10.1038/s41587-020-0469-4</a></td></tr>
+                        <tr><td><strong>Luecken et al.</strong></td><td>Integration</td><td>2022</td><td>16</td><td>>1.2M cells</td><td>scANVI best overall</td><td><a href="https://doi.org/10.1038/s41592-021-01336-8" target="_blank">10.1038/s41592-021-01336-8</a></td></tr>
+                        <tr><td><strong>Kedzierska et al.</strong></td><td>Zero-shot FM</td><td>2025</td><td>FMs vs baselines</td><td>Multiple</td><td>FMs underperform baselines</td><td><a href="https://doi.org/10.1186/s13059-025-03574-x" target="_blank">10.1186/s13059-025-03574-x</a></td></tr>
+                        <tr><td><strong>Csendes et al.</strong></td><td>Perturbation</td><td>2025</td><td>FMs vs classical</td><td>4 Perturb-seq datasets</td><td>RF outperforms FMs</td><td><a href="https://doi.org/10.1186/s12864-025-11600-2" target="_blank">10.1186/s12864-025-11600-2</a></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h3 style="margin: 30px 0 15px;">Standard Benchmark Datasets</h3>
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead><tr><th>Dataset</th><th>Tissue</th><th>Cells</th><th>Cell Types</th><th>Platform</th><th>Use Case</th><th>Source</th></tr></thead>
+                    <tbody>
+                        <tr class="highlight-row"><td><strong>PBMC 10x</strong></td><td>Blood</td><td>~3-10K</td><td>8-15</td><td>10x Chromium</td><td>Integration, annotation</td><td><a href="https://support.10xgenomics.com/single-cell-gene-expression/datasets" target="_blank">10x Genomics</a></td></tr>
+                        <tr><td><strong>Baron Pancreas</strong></td><td>Pancreas</td><td>~8,500</td><td>14</td><td>inDrop</td><td>Cross-protocol benchmark</td><td><a href="https://doi.org/10.1016/j.cels.2016.08.011" target="_blank">GSE84133</a></td></tr>
+                        <tr><td><strong>Muraro Pancreas</strong></td><td>Pancreas</td><td>~2,100</td><td>9</td><td>CEL-seq2</td><td>Annotation benchmark</td><td><a href="https://doi.org/10.1016/j.cels.2016.09.002" target="_blank">GSE85241</a></td></tr>
+                        <tr><td><strong>Segerstolpe Pancreas</strong></td><td>Pancreas</td><td>~2,200</td><td>9</td><td>Smart-seq2</td><td>Protocol comparison</td><td><a href="https://doi.org/10.1016/j.cmet.2016.08.020" target="_blank">E-MTAB-5061</a></td></tr>
+                        <tr><td><strong>Tasic Brain</strong></td><td>Mouse cortex</td><td>~1,700</td><td>49</td><td>Smart-seq</td><td>Fine-grained annotation</td><td><a href="https://doi.org/10.1038/nn.4216" target="_blank">Allen Brain</a></td></tr>
+                        <tr><td><strong>Zeisel Brain</strong></td><td>Mouse cortex</td><td>~3,000</td><td>9</td><td>Fluidigm C1</td><td>Clustering benchmark</td><td><a href="https://doi.org/10.1126/science.aaa1934" target="_blank">GSE60361</a></td></tr>
+                        <tr><td><strong>Tabula Muris</strong></td><td>Multi-tissue</td><td>~100K</td><td>~100</td><td>10x + Smart-seq2</td><td>Atlas benchmark</td><td><a href="https://doi.org/10.1038/s41586-018-0590-4" target="_blank">figshare</a></td></tr>
+                        <tr><td><strong>Tabula Sapiens</strong></td><td>Human multi-tissue</td><td>~500K</td><td>400+</td><td>10x</td><td>Human reference</td><td><a href="https://doi.org/10.1126/science.abl4896" target="_blank">CZ CELLxGENE</a></td></tr>
+                        <tr class="highlight-row"><td><strong>Norman Perturb-seq</strong></td><td>K562</td><td>~100K</td><td>-</td><td>10x + CRISPR</td><td>Perturbation prediction</td><td><a href="https://doi.org/10.1126/science.aax4438" target="_blank">GSE133344</a></td></tr>
+                        <tr><td><strong>Adamson Perturb-seq</strong></td><td>K562</td><td>~35K</td><td>-</td><td>Perturb-seq</td><td>Perturbation prediction</td><td><a href="https://doi.org/10.1016/j.cell.2016.11.048" target="_blank">GSE90063</a></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h3 style="margin: 30px 0 15px;">Perturbation Prediction Benchmark (Csendes et al. 2025)</h3>
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead><tr><th>Method</th><th>Type</th><th>Adamson</th><th>Norman</th><th>Replogle K562</th><th>Replogle RPE1</th><th>Mean</th></tr></thead>
+                    <tbody>
+                        <tr class="highlight-row"><td><strong>RF + GO Features</strong></td><td>Classical ML</td><td class="highlight-cell">0.739</td><td class="highlight-cell">0.586</td><td class="highlight-cell">0.480</td><td class="highlight-cell">0.648</td><td class="highlight-cell">0.613</td></tr>
+                        <tr class="highlight-row"><td><strong>Train Mean</strong></td><td>Baseline</td><td>0.711</td><td>0.557</td><td>0.373</td><td>0.628</td><td>0.567</td></tr>
+                        <tr><td>scGPT</td><td>Foundation Model</td><td>0.641</td><td>0.554</td><td>0.327</td><td>0.596</td><td>0.530</td></tr>
+                        <tr><td>scFoundation</td><td>Foundation Model</td><td>0.552</td><td>0.459</td><td>0.269</td><td>0.471</td><td>0.438</td></tr>
+                        <tr><td>Geneformer</td><td>Foundation Model</td><td>0.558</td><td>0.471</td><td>0.285</td><td>0.486</td><td>0.450</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted);"><em>Source: Csendes et al. BMC Genomics 2025. DOI: <a href="https://doi.org/10.1186/s12864-025-11600-2" target="_blank">10.1186/s12864-025-11600-2</a>. Values are Pearson Delta correlation coefficients.</em></p>
+        </section>
+        
+        <!-- Downloads Section -->
+        <section id="downloads" class="section">
+            <div class="section-header">
+                <h2>Downloadable Static Figures</h2>
+                <p>High-resolution figures for publication. All figures use the Wong colorblind-safe palette (Nature Methods 2011).</p>
+            </div>
+            
+            <button class="download-all-btn" onclick="downloadAllFigures()">⬇️ Download All Figures (ZIP)</button>
+            
+            <div class="chart-grid">
+                <div class="chart-card">
+                    <h3>Figure 1: Classical ML vs Foundation Models</h3>
+                    <p class="card-subtitle">Cell type annotation benchmark comparison</p>
+                    <button class="download-btn" onclick="downloadChart('chart-annotation-comparison', 'Fig1_ClassicalML_vs_FM_Annotation')">⬇️ Download PNG</button>
+                    <button class="download-btn" onclick="downloadChartSVG('chart-annotation-comparison', 'Fig1_ClassicalML_vs_FM_Annotation')">⬇️ Download SVG</button>
+                </div>
+                <div class="chart-card">
+                    <h3>Figure 2: Perturbation Prediction Benchmark</h3>
+                    <p class="card-subtitle">RF + GO vs Foundation Models (Csendes 2025)</p>
+                    <button class="download-btn" onclick="downloadChart('chart-perturbation-comparison', 'Fig2_Perturbation_Benchmark')">⬇️ Download PNG</button>
+                    <button class="download-btn" onclick="downloadChartSVG('chart-perturbation-comparison', 'Fig2_Perturbation_Benchmark')">⬇️ Download SVG</button>
+                </div>
+                <div class="chart-card">
+                    <h3>Figure 3: Batch Correction Methods</h3>
+                    <p class="card-subtitle">scIB benchmark results (Luecken 2022)</p>
+                    <button class="download-btn" onclick="downloadChart('chart-batch-scatter', 'Fig3_Batch_Correction_Benchmark')">⬇️ Download PNG</button>
+                    <button class="download-btn" onclick="downloadChartSVG('chart-batch-scatter', 'Fig3_Batch_Correction_Benchmark')">⬇️ Download SVG</button>
+                </div>
+                <div class="chart-card">
+                    <h3>Figure 4: Foundation Model Comparison</h3>
+                    <p class="card-subtitle">Radar chart of FM performance metrics</p>
+                    <button class="download-btn" onclick="downloadChart('radar-overall', 'Fig4_Foundation_Model_Radar')">⬇️ Download PNG</button>
+                    <button class="download-btn" onclick="downloadChartSVG('radar-overall', 'Fig4_Foundation_Model_Radar')">⬇️ Download SVG</button>
+                </div>
+            </div>
+            
+            <div class="info-box info">
+                <strong>ℹ️ Figure Export Settings</strong>
+                <p style="margin-top: 10px;">PNG exports are at 3× resolution (suitable for print at 300 DPI). SVG exports are vector format for infinite scalability. All figures include the Wong colorblind-safe palette and are WCAG 2.1 Level AA compliant.</p>
+            </div>
+        </section>
+        
+        <!-- About Section -->
+        <section id="about" class="section">
+            <div class="section-header">
+                <h2>About This Visualization</h2>
+                <p>Citation information, methodology, and accessibility.</p>
+            </div>
+            
+            <div class="chart-grid">
+                <div class="chart-card">
+                    <h3>How to Cite</h3>
+                    <div class="detail-citation" style="margin-top: 15px;">
+                        <p class="detail-citation-text">Bantu R. (2025). Foundation Models Meet Organoid Biology: Promises, Limitations, and the Path Forward for Computational Stem Cell Engineering. <em>Nature Methods</em> [In Review].</p>
+                        <p style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted);">Interactive figures: <a href="#" class="detail-doi">https://banturakesh.github.io/scfm-timeline</a></p>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>Data Sources</h3>
+                    <ul style="margin-top: 15px; padding-left: 20px; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.8;">
+                        <li>Duò et al. (2018) - Clustering benchmark</li>
+                        <li>Abdelaal et al. (2019) - Annotation benchmark</li>
+                        <li>Saelens et al. (2019) - Trajectory benchmark</li>
+                        <li>Luecken et al. (2022) - Integration benchmark (scIB)</li>
+                        <li>Kedzierska et al. (2025) - Zero-shot evaluation</li>
+                        <li>Csendes et al. (2025) - Perturbation benchmark</li>
+                        <li>Vento-Tormo et al. (2018) - Maternal-fetal interface</li>
+                    </ul>
+                </div>
+                <div class="chart-card">
+                    <h3>Accessibility</h3>
+                    <p style="margin-top: 15px; color: var(--text-secondary); font-size: 0.95rem;">WCAG 2.1 Level AA compliant. Wong colorblind-safe palette (Nature Methods 2011; 8:441). All data in accessible tables with DOI links.</p>
+                </div>
+                <div class="chart-card">
+                    <h3>Technical</h3>
+                    <p style="margin-top: 15px; color: var(--text-secondary); font-size: 0.95rem;">Built with Vis.js Timeline and Plotly.js. GitHub Pages hosted with Zenodo DOI archiving. All citations verified January 2025.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Modals -->
+    <div class="modal-overlay" id="modal-radar-help">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📊 How to Read Radar Charts</h3>
+                <button class="modal-close" onclick="closeModal('radar-help')">×</button>
+            </div>
+            <div class="modal-body">
+                <h4>What is a Radar Chart?</h4>
+                <p>A radar chart displays multiple variables on axes starting from a common center point. Each axis represents a different metric, and the data values are plotted as points connected to form a polygon.</p>
+                
+                <h4>Reading the Axes</h4>
+                <ul>
+                    <li><strong>Distance from center</strong> = Performance level (farther = better)</li>
+                    <li><strong>Each spoke</strong> = Different evaluation metric</li>
+                    <li><strong>Polygon area</strong> = Overall performance (larger = better)</li>
+                </ul>
+                
+                <h4>Key Metrics Explained</h4>
+                <ul>
+                    <li><span class="metric-badge metric-good">Cell Type Annotation</span> Accuracy of predicting cell types (0-1 scale)</li>
+                    <li><span class="metric-badge metric-good">Batch Integration</span> How well batches are mixed (iLISI, kBET metrics)</li>
+                    <li><span class="metric-badge metric-moderate">Perturbation</span> Predicting gene expression after perturbations (Pearson correlation)</li>
+                    <li><span class="metric-badge metric-note">Scalability</span> Ability to handle large datasets efficiently</li>
+                </ul>
+                
+                <h4>Color Legend (Wong Palette)</h4>
+                <ul>
+                    <li><span style="color: #0072B2; font-weight: 600;">■ Blue</span> = scGPT</li>
+                    <li><span style="color: #CC79A7; font-weight: 600;">■ Purple</span> = Geneformer</li>
+                    <li><span style="color: #D55E00; font-weight: 600;">■ Red</span> = scFoundation</li>
+                    <li><span style="color: #009E73; font-weight: 600;">■ Green (dashed)</span> = Classical ML Baseline</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modal-clustering-help">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔵 Understanding Clustering Benchmarks</h3>
+                <button class="modal-close" onclick="closeModal('clustering-help')">×</button>
+            </div>
+            <div class="modal-body">
+                <h4>Key Metrics</h4>
+                <ul>
+                    <li><span class="metric-badge metric-good">ARI (Adjusted Rand Index)</span> Measures agreement between predicted and true clusters. Range: -1 to 1, higher is better. ARI > 0.8 is excellent.</li>
+                    <li><span class="metric-badge metric-good">NMI (Normalized Mutual Information)</span> Information-theoretic measure of cluster quality. Range: 0 to 1.</li>
+                </ul>
+                <h4>Benchmark Source</h4>
+                <p>Duò A, Robinson MD, Soneson C. A systematic performance evaluation of clustering methods for single-cell RNA-seq data. F1000Research 2018; 7:1141. DOI: 10.12688/f1000research.15666.2</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modal-classification-help">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🏷️ Understanding Classification Benchmarks</h3>
+                <button class="modal-close" onclick="closeModal('classification-help')">×</button>
+            </div>
+            <div class="modal-body">
+                <h4>Key Metrics</h4>
+                <ul>
+                    <li><span class="metric-badge metric-good">F1-Score</span> Harmonic mean of precision and recall. Range: 0-1. F1 > 0.9 is excellent.</li>
+                    <li><span class="metric-badge metric-moderate">Precision</span> Of predicted positives, how many are correct?</li>
+                    <li><span class="metric-badge metric-moderate">Recall</span> Of actual positives, how many were found?</li>
+                </ul>
+                <h4>Why "Rejection" Matters</h4>
+                <p>SVM with rejection can say "I don't know" for uncertain predictions, which is crucial for novel cell types not in training data.</p>
+                <h4>Benchmark Source</h4>
+                <p>Abdelaal T, et al. A comparison of automatic cell identification methods for single-cell RNA sequencing data. Genome Biology 2019; 20:194. DOI: 10.1186/s13059-019-1795-z</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modal-dimred-help">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📉 Understanding Dimensionality Reduction</h3>
+                <button class="modal-close" onclick="closeModal('dimred-help')">×</button>
+            </div>
+            <div class="modal-body">
+                <h4>Key Properties</h4>
+                <ul>
+                    <li><span class="metric-badge metric-good">Local Structure</span> Preserves neighborhood relationships</li>
+                    <li><span class="metric-badge metric-moderate">Global Structure</span> Preserves overall relationships</li>
+                    <li><span class="metric-badge metric-note">Reproducibility</span> Same input → same output (t-SNE is stochastic!)</li>
+                </ul>
+                <h4>When to Use Each Method</h4>
+                <ul>
+                    <li><strong>PCA:</strong> Always as preprocessing; interpretable</li>
+                    <li><strong>UMAP:</strong> Default visualization; fast and good global structure</li>
+                    <li><strong>t-SNE:</strong> Publication figures; best cluster separation</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modal-batch-help">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔄 Understanding Batch Correction Metrics</h3>
+                <button class="modal-close" onclick="closeModal('batch-help')">×</button>
+            </div>
+            <div class="modal-body">
+                <h4>The Integration Challenge</h4>
+                <p>Combining data from different experiments while removing technical variation but preserving biological signal.</p>
+                <h4>Batch Removal Metrics</h4>
+                <ul>
+                    <li><span class="metric-badge metric-good">kBET</span> k-nearest neighbor batch effect test. Higher = batches better mixed.</li>
+                    <li><span class="metric-badge metric-good">iLISI</span> Integration LISI. Higher = better mixing.</li>
+                </ul>
+                <h4>Benchmark Source</h4>
+                <p>Luecken MD, et al. Benchmarking atlas-level data integration in single-cell genomics. Nature Methods 2022; 19:41-50. DOI: 10.1038/s41592-021-01336-8</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modal-trajectory-help">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🛤️ Understanding Trajectory Inference</h3>
+                <button class="modal-close" onclick="closeModal('trajectory-help')">×</button>
+            </div>
+            <div class="modal-body">
+                <h4>Trajectory Topologies</h4>
+                <ul>
+                    <li><strong>Linear:</strong> Simple progression A → B</li>
+                    <li><strong>Bifurcation:</strong> One branch point A → B or C</li>
+                    <li><strong>Tree:</strong> Multiple branches from common root</li>
+                    <li><strong>Complex:</strong> Cycles, multiple roots</li>
+                </ul>
+                <h4>Benchmark Source</h4>
+                <p>Saelens W, et al. A comparison of single-cell trajectory inference methods. Nature Biotechnology 2019; 37:547-554. DOI: 10.1038/s41587-019-0071-9</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modal-comparison-help">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚖️ Interpreting ML vs Foundation Model Comparisons</h3>
+                <button class="modal-close" onclick="closeModal('comparison-help')">×</button>
+            </div>
+            <div class="modal-body">
+                <h4>When Classical ML Wins</h4>
+                <ul>
+                    <li><strong>Small datasets:</strong> Less data → less benefit from pretraining</li>
+                    <li><strong>Well-defined tasks:</strong> Clear labels, established protocols</li>
+                    <li><strong>Interpretability needed:</strong> Feature importance, decision rules</li>
+                    <li><strong>Resource constraints:</strong> No GPU, limited time</li>
+                </ul>
+                <h4>When Foundation Models Win</h4>
+                <ul>
+                    <li><strong>Zero-shot transfer:</strong> New tissues/species without retraining</li>
+                    <li><strong>Complex integration:</strong> Many batches, modalities</li>
+                    <li><strong>Representation learning:</strong> Embeddings for downstream tasks</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modal-pe-ml-help">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🤰 Preeclampsia ML Prediction Models</h3>
+                <button class="modal-close" onclick="closeModal('pe-ml-help')">×</button>
+            </div>
+            <div class="modal-body">
+                <h4>Data Types Used</h4>
+                <ul>
+                    <li><strong>scRNA-seq:</strong> Cell-type-specific gene expression</li>
+                    <li><strong>Bulk RNA-seq:</strong> Tissue-level expression profiles</li>
+                    <li><strong>Clinical features:</strong> Blood pressure, proteinuria, biomarkers</li>
+                </ul>
+                <h4>Common Approaches</h4>
+                <ul>
+                    <li><strong>Feature selection:</strong> LASSO, ReliefF, WGCNA for identifying key genes</li>
+                    <li><strong>Classification:</strong> XGBoost, Random Forest, SVM for risk prediction</li>
+                    <li><strong>Integration:</strong> Combining scRNA-seq with GWAS/Mendelian randomization</li>
+                </ul>
+                <h4>Key Performance Metrics</h4>
+                <ul>
+                    <li><span class="metric-badge metric-good">AUC > 0.85</span> Excellent discrimination</li>
+                    <li><span class="metric-badge metric-moderate">Accuracy > 90%</span> High classification performance</li>
+                    <li><span class="metric-badge metric-note">Sensitivity</span> Important for clinical screening</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Detail Panel -->
+    <div class="overlay" id="overlay"></div>
+    <aside class="detail-panel" id="detailPanel">
+        <div class="detail-panel-header">
+            <h3>Method Details</h3>
+            <button class="close-btn" id="closePanel">×</button>
+        </div>
+        <div class="detail-panel-content" id="detailContent"></div>
+    </aside>
+    
+    <footer class="footer">
+        <p><strong>Interactive Supplementary Figures</strong> | Nature Methods Review (2025)</p>
+        <p>Rakesh Bantu | Syracuse University | <a href="https://banturakesh.github.io" target="_blank">banturakesh.github.io</a></p>
+        <p style="margin-top: 15px; font-size: 0.8rem;">Color palette: Wong B. Nature Methods 2011; 8:441 | Libraries: Vis.js, Plotly.js | All citations verified January 2025</p>
+    </footer>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-timeline/7.7.3/vis-timeline-graph2d.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    
+    <script>
+        // ==================== DATA ====================
+        
+        const colors = { 
+            orange: '#E69F00', skyBlue: '#56B4E9', bluishGreen: '#009E73', 
+            yellow: '#F0E442', blue: '#0072B2', vermillion: '#D55E00', 
+            reddishPurple: '#CC79A7', black: '#000000' 
+        };
+        
+        // Main Timeline Data (abbreviated for space - same as v3)
+        const mainTimelineData = [
+            { id: 1, content: "First scRNA-seq", start: "2009-05-01", group: "singlecell", data: { year: 2009, title: "First Single-Cell RNA Sequencing", description: "First digital transcriptome analysis at single-cell resolution.", citation: "Tang F, et al. Nature Methods 2009; 6(5):377-382.", doi: "10.1038/nmeth.1315", category: "Single-Cell Technology", color: "#E69F00" }},
+            { id: 2, content: "Drop-seq/inDrop", start: "2015-05-01", group: "singlecell", data: { year: 2015, title: "Droplet Revolution", description: "Droplet-based methods enabling tens of thousands of cells.", citation: "Macosko EZ, et al. Cell 2015; 161(5):1202-1214.", doi: "10.1016/j.cell.2015.05.002", category: "Single-Cell Technology", color: "#E69F00" }},
+            { id: 3, content: "10x Chromium", start: "2017-01-01", group: "singlecell", data: { year: 2017, title: "10x Genomics Chromium", description: "Commercial platform enabling standardized profiling.", citation: "Zheng GXY, et al. Nature Communications 2017; 8:14049.", doi: "10.1038/ncomms14049", category: "Single-Cell Technology", color: "#E69F00" }},
+            { id: 10, content: "Seurat v1", start: "2015-05-01", group: "tools", data: { year: 2015, title: "Seurat v1", description: "First version of most widely-used single-cell toolkit.", citation: "Satija R, et al. Nature Biotechnology 2015; 33(5):495-502.", doi: "10.1038/nbt.3192", category: "Analysis Tool", color: "#0072B2" }},
+            { id: 11, content: "Scanpy", start: "2018-02-01", group: "tools", data: { year: 2018, title: "Scanpy", description: "Scalable Python toolkit built on AnnData.", citation: "Wolf FA, et al. Genome Biology 2018; 19(1):15.", doi: "10.1186/s13059-017-1382-0", category: "Analysis Tool", color: "#0072B2" }},
+            { id: 20, content: "Intestinal Organoids", start: "2009-03-01", group: "organoids", data: { year: 2009, title: "Intestinal Organoids", description: "Landmark: single Lgr5+ stem cells self-organize into 3D structures.", citation: "Sato T, et al. Nature 2009; 459(7244):262-265.", doi: "10.1038/nature07935", category: "Organoid System", color: "#009E73" }},
+            { id: 21, content: "Cerebral Organoids", start: "2013-08-01", group: "organoids", data: { year: 2013, title: "Cerebral Organoids", description: "First human brain organoids modeling development.", citation: "Lancaster MA, et al. Nature 2013; 501(7467):373-379.", doi: "10.1038/nature12517", category: "Organoid System", color: "#009E73" }},
+            { id: 22, content: "Trophoblast Organoids", start: "2018-12-01", group: "organoids", data: { year: 2018, title: "Trophoblast Organoids", description: "Placental organoid cultures from first-trimester placentas.", citation: "Turco MY, et al. Nature 2018; 564:263-267.", doi: "10.1038/s41586-018-0753-3", category: "Organoid System", color: "#009E73" }},
+            { id: 40, content: "Geneformer", start: "2023-05-01", group: "foundation", data: { year: 2023, title: "Geneformer", description: "BERT-based foundation model trained on 30M cells.", citation: "Theodoris CV, et al. Nature 2023; 618:616-624.", doi: "10.1038/s41586-023-06139-9", category: "Foundation Model", color: "#CC79A7" }},
+            { id: 41, content: "scGPT", start: "2024-02-01", group: "foundation", data: { year: 2024, title: "scGPT", description: "GPT-based foundation model trained on 33M cells.", citation: "Cui H, et al. Nature Methods 2024; 21(8):1470-1480.", doi: "10.1038/s41592-024-02201-0", category: "Foundation Model", color: "#CC79A7" }},
+            { id: 50, content: "HCA Launch", start: "2016-10-01", group: "atlases", data: { year: 2016, title: "Human Cell Atlas", description: "International consortium to map all human cells.", citation: "Regev A, et al. eLife 2017; 6:e27041.", doi: "10.7554/eLife.27041", category: "Cell Atlas", color: "#56B4E9" }},
+        ];
+        
+        // ML Timeline Data
+        const mlTimelineData = [
+            { id: 102, content: "Louvain", start: "2008-10-01", group: "clustering", data: { year: 2008, title: "Louvain Algorithm", description: "Modularity optimization for community detection.", citation: "Blondel VD, et al. J Stat Mech 2008; P10008.", doi: "10.1088/1742-5468/2008/10/P10008", category: "Clustering", color: "#0072B2" }},
+            { id: 105, content: "Leiden", start: "2019-03-01", group: "clustering", data: { year: 2019, title: "Leiden Algorithm", description: "Guarantees connected communities. Current gold standard.", citation: "Traag VA, et al. Scientific Reports 2019; 9:5233.", doi: "10.1038/s41598-019-41695-z", category: "Clustering", color: "#0072B2" }},
+            { id: 120, content: "t-SNE", start: "2008-11-01", group: "dimred", data: { year: 2008, title: "t-SNE", description: "Non-linear visualization preserving local structure.", citation: "van der Maaten L, Hinton G. JMLR 2008; 9:2579-2605.", doi: "jmlr.org/papers/v9/vandermaaten08a", category: "Dim. Reduction", color: "#009E73" }},
+            { id: 122, content: "UMAP", start: "2018-09-01", group: "dimred", data: { year: 2018, title: "UMAP", description: "10-100× faster than t-SNE, better global structure.", citation: "Becht E, et al. Nature Biotechnology 2019; 37:38-44.", doi: "10.1038/nbt.4314", category: "Dim. Reduction", color: "#009E73" }},
+            { id: 133, content: "Harmony", start: "2019-11-01", group: "batch", data: { year: 2019, title: "Harmony", description: "Fastest integration, ~10⁶ cells in minutes.", citation: "Korsunsky I, et al. Nature Methods 2019; 16:1289-1296.", doi: "10.1038/s41592-019-0619-0", category: "Batch Correction", color: "#D55E00" }},
+            { id: 143, content: "Slingshot", start: "2018-06-01", group: "trajectory", data: { year: 2018, title: "Slingshot", description: "Principal curves through cluster-based MST.", citation: "Street K, et al. BMC Genomics 2018; 19:477.", doi: "10.1186/s12864-018-4772-0", category: "Trajectory", color: "#CC79A7" }},
+            { id: 145, content: "PAGA", start: "2019-03-01", group: "trajectory", data: { year: 2019, title: "PAGA", description: "Graph abstraction for complex topologies.", citation: "Wolf FA, et al. Genome Biology 2019; 20:59.", doi: "10.1186/s13059-019-1663-x", category: "Trajectory", color: "#CC79A7" }},
+            { id: 151, content: "Abdelaal Benchmark", start: "2019-09-01", group: "benchmarks", data: { year: 2019, title: "Annotation Benchmark", description: "22 methods, 27 datasets. SVM wins.", citation: "Abdelaal T, et al. Genome Biology 2019; 20:194.", doi: "10.1186/s13059-019-1795-z", category: "Benchmark", color: "#56B4E9" }},
+        ];
+        
+        // Preeclampsia Timeline Data
+        const peTimelineData = [
+            { id: 201, content: "Maternal-Fetal Atlas", start: "2018-11-01", group: "atlas", data: { year: 2018, title: "Vento-Tormo Maternal-Fetal Interface Atlas", description: "~70,000 cells from first-trimester placentas with CellPhoneDB for ligand-receptor analysis.", citation: "Vento-Tormo R, et al. Nature 2018; 563:347-353.", doi: "10.1038/s41586-018-0698-6", category: "Placental Atlas", color: "#009E73" }},
+            { id: 202, content: "Trophoblast Organoids", start: "2018-12-01", group: "organoid", data: { year: 2018, title: "First Trophoblast Organoids", description: "Long-term culture of trophoblast organoids from first-trimester placenta.", citation: "Turco MY, et al. Nature 2018; 564:263-267.", doi: "10.1038/s41586-018-0753-3", category: "Organoid Model", color: "#CC79A7" }},
+            { id: 203, content: "PE scRNA-seq Signatures", start: "2019-08-01", group: "pe", data: { year: 2019, title: "Cell-Type-Specific PE Signatures", description: "Single-cell transcriptional signatures distinguishing preeclampsia.", citation: "Pique-Regi R, et al. Am J Obstet Gynecol 2019.", doi: "10.1016/j.ajog.2019.08.032", category: "PE scRNA-seq", color: "#D55E00" }},
+            { id: 204, content: "Full-Term Placenta Atlas", start: "2022-06-01", group: "atlas", data: { year: 2022, title: "Full-Term Placenta Single-Cell Atlas", description: "~50,000 cells revealing CTB, STB heterogeneity and trophoblast progenitor-like cells.", citation: "Wang Q, et al. Scientific Reports 2022; 12:10892.", doi: "10.1038/s41598-022-14516-z", category: "Placental Atlas", color: "#009E73" }},
+            { id: 205, content: "XGBoost PE Prediction", start: "2023-02-01", group: "ml", data: { year: 2023, title: "TURF + XGBoost for PE Risk", description: "92.61% accuracy for classifying placental cell subpopulations and PE risk.", citation: "Wang H, et al. Cell & Bioscience 2023; 13:41.", doi: "10.1186/s13578-023-00991-y", category: "ML Prediction", color: "#0072B2" }},
+            { id: 206, content: "STB snRNA-seq", start: "2024-01-01", group: "atlas", data: { year: 2024, title: "Single-Nucleus STB Profiling", description: "101,543 nuclei with snRNA-seq + snATAC-seq revealing STB heterogeneity.", citation: "Liu Y, et al. Nature Genetics 2024; 56:294-305.", doi: "10.1038/s41588-023-01647-w", category: "Placental Atlas", color: "#009E73" }},
+            { id: 207, content: "Immune PE Diagnostic", start: "2024-01-01", group: "ml", data: { year: 2024, title: "Cell-Type-Specific ML Diagnostics", description: "Four ML models for PE diagnostic indicators from circulating immune cells.", citation: "Li S, et al. Communications Biology 2024; 7:95.", doi: "10.1038/s42003-023-05669-2", category: "ML Prediction", color: "#0072B2" }},
+            { id: 208, content: "scRNA vs snRNA PE", start: "2024-12-01", group: "pe", data: { year: 2024, title: "scRNA-seq vs snRNA-seq in PE", description: "Comparison showing scRNA-seq advantages but STB ~50× better in snRNA-seq.", citation: "Pique-Regi R, et al. Placenta 2024.", doi: "10.1016/j.placenta.2024.12.013", category: "PE scRNA-seq", color: "#D55E00" }},
+        ];
+        
+        // ==================== INITIALIZATION ====================
+        
+        let mainTimeline = null, mlTimeline = null, peTimeline = null;
+        let chartsInitialized = { classical: false, foundation: false, comparison: false, pe: false, benchmarks: false };
+        
+        window.addEventListener('load', () => setTimeout(initApp, 100));
+        
+        function initApp() {
+            if (typeof vis === 'undefined' || typeof Plotly === 'undefined') {
+                document.querySelectorAll('.loading').forEach(el => {
+                    el.innerHTML = '<span style="color:#D55E00">Error loading libraries. Please refresh.</span>';
+                });
+                return;
+            }
+            initMainTimeline();
+            initNavigation();
+            initSubsectionTabs();
+            initDetailPanel();
+            initTimelineControls();
+        }
+        
+        // ==================== TIMELINES ====================
+        
+        function initMainTimeline() {
+            const groups = new vis.DataSet([
+                { id: 'singlecell', content: '<span style="color:#E69F00;font-weight:600">Single-Cell Tech</span>' },
+                { id: 'tools', content: '<span style="color:#0072B2;font-weight:600">Analysis Tools</span>' },
+                { id: 'organoids', content: '<span style="color:#009E73;font-weight:600">Organoids</span>' },
+                { id: 'spatial', content: '<span style="color:#D55E00;font-weight:600">Spatial</span>' },
+                { id: 'foundation', content: '<span style="color:#CC79A7;font-weight:600">Foundation Models</span>' },
+                { id: 'atlases', content: '<span style="color:#56B4E9;font-weight:600">Cell Atlases</span>' }
+            ]);
+            
+            const items = new vis.DataSet(mainTimelineData.map(item => ({
+                id: item.id, content: item.content, start: item.start, group: item.group,
+                style: `background-color:${item.data.color};color:white;`,
+                data: item.data
+            })));
+            
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = '';
+            
+            mainTimeline = new vis.Timeline(container, items, groups, {
+                stack: true, showCurrentTime: false,
+                zoomMin: 365*24*60*60*1000, zoomMax: 30*365*24*60*60*1000,
+                min: new Date(2000,0,1), max: new Date(2027,0,1), orientation: 'top'
+            });
+            
+            mainTimeline.on('select', props => {
+                if (props.items.length > 0) {
+                    const item = mainTimelineData.find(d => d.id === props.items[0]);
+                    if (item) showDetailPanel(item.data);
+                }
+            });
+            
+            setTimeout(() => mainTimeline.fit(), 200);
+        }
+        
+        function initMLTimeline() {
+            if (mlTimeline) return;
+            
+            const groups = new vis.DataSet([
+                { id: 'clustering', content: '<span style="color:#0072B2;font-weight:600">Clustering</span>' },
+                { id: 'classification', content: '<span style="color:#E69F00;font-weight:600">Classification</span>' },
+                { id: 'dimred', content: '<span style="color:#009E73;font-weight:600">Dim. Reduction</span>' },
+                { id: 'batch', content: '<span style="color:#D55E00;font-weight:600">Batch Correction</span>' },
+                { id: 'trajectory', content: '<span style="color:#CC79A7;font-weight:600">Trajectory</span>' },
+                { id: 'benchmarks', content: '<span style="color:#56B4E9;font-weight:600">Benchmarks</span>' }
+            ]);
+            
+            const items = new vis.DataSet(mlTimelineData.map(item => ({
+                id: item.id, content: item.content, start: item.start, group: item.group,
+                style: `background-color:${item.data.color};color:white;`,
+                data: item.data
+            })));
+            
+            const container = document.getElementById('ml-timeline-container');
+            container.innerHTML = '';
+            
+            mlTimeline = new vis.Timeline(container, items, groups, {
+                stack: true, showCurrentTime: false,
+                zoomMin: 365*24*60*60*1000, zoomMax: 50*365*24*60*60*1000,
+                min: new Date(2005,0,1), max: new Date(2027,0,1), orientation: 'top'
+            });
+            
+            mlTimeline.on('select', props => {
+                if (props.items.length > 0) {
+                    const item = mlTimelineData.find(d => d.id === props.items[0]);
+                    if (item) showDetailPanel(item.data);
+                }
+            });
+            
+            setTimeout(() => mlTimeline.fit(), 200);
+        }
+        
+        function initPETimeline() {
+            if (peTimeline) return;
+            
+            const groups = new vis.DataSet([
+                { id: 'atlas', content: '<span style="color:#009E73;font-weight:600">Placental Atlas</span>' },
+                { id: 'ml', content: '<span style="color:#0072B2;font-weight:600">ML/Prediction</span>' },
+                { id: 'pe', content: '<span style="color:#D55E00;font-weight:600">PE scRNA-seq</span>' },
+                { id: 'organoid', content: '<span style="color:#CC79A7;font-weight:600">Organoids</span>' }
+            ]);
+            
+            const items = new vis.DataSet(peTimelineData.map(item => ({
+                id: item.id, content: item.content, start: item.start, group: item.group,
+                style: `background-color:${item.data.color};color:white;`,
+                data: item.data
+            })));
+            
+            const container = document.getElementById('pe-timeline-container');
+            container.innerHTML = '';
+            
+            peTimeline = new vis.Timeline(container, items, groups, {
+                stack: true, showCurrentTime: false,
+                zoomMin: 365*24*60*60*1000, zoomMax: 15*365*24*60*60*1000,
+                min: new Date(2016,0,1), max: new Date(2027,0,1), orientation: 'top'
+            });
+            
+            peTimeline.on('select', props => {
+                if (props.items.length > 0) {
+                    const item = peTimelineData.find(d => d.id === props.items[0]);
+                    if (item) showDetailPanel(item.data);
+                }
+            });
+            
+            setTimeout(() => peTimeline.fit(), 200);
+        }
+        
+        // ==================== NAVIGATION ====================
+        
+        function initNavigation() {
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const sectionId = this.dataset.section;
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                    document.getElementById(sectionId).classList.add('active');
+                    
+                    if (sectionId === 'classical-ml') {
+                        setTimeout(initMLTimeline, 100);
+                        if (!chartsInitialized.classical) { setTimeout(initClassicalCharts, 200); chartsInitialized.classical = true; }
+                    }
+                    if (sectionId === 'foundation' && !chartsInitialized.foundation) { setTimeout(initFoundationCharts, 100); chartsInitialized.foundation = true; }
+                    if (sectionId === 'comparison' && !chartsInitialized.comparison) { setTimeout(initComparisonCharts, 100); chartsInitialized.comparison = true; }
+                    if (sectionId === 'preeclampsia' && !chartsInitialized.pe) { setTimeout(initPECharts, 100); chartsInitialized.pe = true; }
+                });
+            });
+        }
+        
+        function initSubsectionTabs() {
+            document.querySelectorAll('.subsection-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const subsectionId = this.dataset.subsection;
+                    const parent = this.closest('.section');
+                    parent.querySelectorAll('.subsection-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    parent.querySelectorAll('.subsection').forEach(s => s.classList.remove('active'));
+                    document.getElementById(subsectionId).classList.add('active');
+                    
+                    if (subsectionId === 'ml-clustering') initClusteringCharts();
+                    if (subsectionId === 'ml-classification') initClassificationCharts();
+                    if (subsectionId === 'ml-dimred') initDimredCharts();
+                    if (subsectionId === 'ml-batch') initBatchCharts();
+                    if (subsectionId === 'ml-trajectory') initTrajectoryCharts();
+                    if (subsectionId === 'pe-timeline') setTimeout(initPETimeline, 100);
+                    if (subsectionId === 'pe-ml') initPEMLCharts();
+                    if (subsectionId === 'pe-challenges') initPEChallengeCharts();
+                });
+            });
+        }
+        
+        function initDetailPanel() {
+            document.getElementById('closePanel').addEventListener('click', closeDetailPanel);
+            document.getElementById('overlay').addEventListener('click', closeDetailPanel);
+        }
+        
+        function showDetailPanel(data) {
+            document.getElementById('detailContent').innerHTML = `
+                <span class="detail-year">${data.year}</span>
+                <h2 class="detail-title">${data.title}</h2>
+                <p class="detail-description">${data.description}</p>
+                <div class="detail-citation">
+                    <p class="detail-citation-label">Citation</p>
+                    <p class="detail-citation-text">${data.citation}</p>
+                    <a href="https://doi.org/${data.doi}" target="_blank" class="detail-doi">DOI: ${data.doi} →</a>
+                </div>
+                <span class="detail-category" style="background:${data.color}20;color:${data.color};border:1px solid ${data.color}">${data.category}</span>
+            `;
+            document.getElementById('detailPanel').classList.add('open');
+            document.getElementById('overlay').classList.add('open');
+        }
+        
+        function closeDetailPanel() {
+            document.getElementById('detailPanel').classList.remove('open');
+            document.getElementById('overlay').classList.remove('open');
+        }
+        
+        function initTimelineControls() {
+            document.getElementById('btn-fit')?.addEventListener('click', () => mainTimeline?.fit());
+            document.getElementById('btn-ml-fit')?.addEventListener('click', () => mlTimeline?.fit());
+            document.getElementById('btn-pe-fit')?.addEventListener('click', () => peTimeline?.fit());
+            
+            document.querySelectorAll('.control-btn[data-range]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const [start, end] = this.dataset.range.split('-').map(Number);
+                    mainTimeline?.setWindow(new Date(start,0,1), new Date(end,11,31));
+                });
+            });
+            
+            document.querySelectorAll('.control-btn[data-ml-range]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const [start, end] = this.dataset.mlRange.split('-').map(Number);
+                    mlTimeline?.setWindow(new Date(start,0,1), new Date(end,11,31));
+                });
+            });
+        }
+        
+        // ==================== MODALS ====================
+        
+        function openModal(id) { document.getElementById('modal-' + id).classList.add('open'); }
+        function closeModal(id) { document.getElementById('modal-' + id).classList.remove('open'); }
+        
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('open'); });
+        });
+        
+        // ==================== DOWNLOAD FUNCTIONS ====================
+        
+        function downloadChart(chartId, filename) {
+            Plotly.downloadImage(chartId, { format: 'png', width: 1200, height: 800, scale: 3, filename: filename });
+        }
+        
+        function downloadChartSVG(chartId, filename) {
+            Plotly.downloadImage(chartId, { format: 'svg', width: 1200, height: 800, filename: filename });
+        }
+        
+        function downloadAllFigures() {
+            alert('To download all figures, please use the individual download buttons for each chart. A ZIP archive feature will be available in the final version.');
+        }
+        
+        // ==================== CHARTS ====================
+        
+        const defaultLayout = {
+            font: { family: 'Inter, sans-serif', size: 11 },
+            margin: { t: 30, b: 60, l: 50, r: 30 },
+            paper_bgcolor: 'white',
+            plot_bgcolor: 'white'
+        };
+        
+        const radarLayout = {
+            polar: { radialaxis: { visible: true, range: [0, 1], tickfont: { size: 9 } } },
+            showlegend: true,
+            legend: { x: 0.5, y: -0.15, xanchor: 'center', orientation: 'h', font: { size: 9 } },
+            font: { family: 'Inter, sans-serif' },
+            margin: { t: 30, b: 80, l: 50, r: 50 }
+        };
+        
+        function initClassicalCharts() {}
+        
+        function initClusteringCharts() {
+            Plotly.newPlot('chart-clustering-ari', [{
+                type: 'bar',
+                x: ['Leiden', 'SC3', 'Seurat', 'Louvain', 'SIMLR', 'k-means'],
+                y: [0.87, 0.95, 0.85, 0.82, 0.78, 0.65],
+                marker: { color: [colors.bluishGreen, colors.blue, colors.blue, colors.orange, colors.reddishPurple, colors.vermillion] }
+            }], { ...defaultLayout, yaxis: { title: 'Adjusted Rand Index (ARI)', range: [0, 1] } }, { responsive: true, displayModeBar: false });
+            
+            Plotly.newPlot('chart-clustering-radar', [
+                { type: 'scatterpolar', r: [0.87, 0.85, 0.88, 0.86, 0.95, 0.87], theta: ['ARI', 'NMI', 'Homogeneity', 'Completeness', 'Scalability', 'ARI'], fill: 'toself', name: 'Leiden', line: { color: colors.bluishGreen } },
+                { type: 'scatterpolar', r: [0.95, 0.93, 0.94, 0.92, 0.35, 0.95], theta: ['ARI', 'NMI', 'Homogeneity', 'Completeness', 'Scalability', 'ARI'], fill: 'toself', name: 'SC3', line: { color: colors.blue } },
+                { type: 'scatterpolar', r: [0.82, 0.80, 0.82, 0.81, 0.90, 0.82], theta: ['ARI', 'NMI', 'Homogeneity', 'Completeness', 'Scalability', 'ARI'], fill: 'toself', name: 'Louvain', line: { color: colors.orange } }
+            ], radarLayout, { responsive: true, displayModeBar: false });
+        }
+        
+        function initClassificationCharts() {
+            Plotly.newPlot('chart-classification-f1', [{
+                type: 'bar',
+                x: ['SVM (reject)', 'scPred', 'CellTypist', 'Random Forest', 'SingleR', 'XGBoost', 'kNN'],
+                y: [0.96, 0.99, 0.93, 0.91, 0.87, 0.90, 0.85],
+                marker: { color: [colors.bluishGreen, colors.blue, colors.blue, colors.orange, colors.reddishPurple, colors.orange, colors.vermillion] }
+            }], { ...defaultLayout, yaxis: { title: 'Median F1-Score', range: [0.7, 1] } }, { responsive: true, displayModeBar: false });
+            
+            Plotly.newPlot('chart-classification-radar', [
+                { type: 'scatterpolar', r: [0.96, 0.97, 0.95, 0.80, 0.96], theta: ['F1-Score', 'Precision', 'Recall', 'Speed', 'F1-Score'], fill: 'toself', name: 'SVM (rejection)', line: { color: colors.bluishGreen } },
+                { type: 'scatterpolar', r: [0.91, 0.92, 0.90, 0.85, 0.91], theta: ['F1-Score', 'Precision', 'Recall', 'Speed', 'F1-Score'], fill: 'toself', name: 'Random Forest', line: { color: colors.orange } }
+            ], radarLayout, { responsive: true, displayModeBar: false });
+        }
+        
+        function initDimredCharts() {
+            Plotly.newPlot('chart-dimred-comparison', [{
+                type: 'scatter', mode: 'markers+text',
+                x: [0.95, 0.90, 0.85, 0.70, 0.60], y: [0.30, 0.85, 0.75, 0.90, 0.95],
+                text: ['t-SNE', 'UMAP', 'PHATE', 'Diffusion Maps', 'PCA'], textposition: 'top center',
+                marker: { size: [40, 45, 35, 30, 50], color: [colors.orange, colors.bluishGreen, colors.reddishPurple, colors.blue, colors.vermillion] }
+            }], { ...defaultLayout, xaxis: { title: 'Local Structure Preservation', range: [0.5, 1] }, yaxis: { title: 'Speed (relative)', range: [0.2, 1] } }, { responsive: true, displayModeBar: false });
+            
+            Plotly.newPlot('chart-dimred-radar', [
+                { type: 'scatterpolar', r: [0.95, 0.40, 0.30, 0.30, 0.50, 0.95], theta: ['Local', 'Global', 'Speed', 'Scalability', 'Reproducibility', 'Local'], fill: 'toself', name: 't-SNE', line: { color: colors.orange } },
+                { type: 'scatterpolar', r: [0.90, 0.75, 0.85, 0.90, 0.80, 0.90], theta: ['Local', 'Global', 'Speed', 'Scalability', 'Reproducibility', 'Local'], fill: 'toself', name: 'UMAP', line: { color: colors.bluishGreen } },
+                { type: 'scatterpolar', r: [0.50, 0.95, 0.95, 0.95, 1.0, 0.50], theta: ['Local', 'Global', 'Speed', 'Scalability', 'Reproducibility', 'Local'], fill: 'toself', name: 'PCA', line: { color: colors.blue } }
+            ], radarLayout, { responsive: true, displayModeBar: false });
+        }
+        
+        function initBatchCharts() {
+            Plotly.newPlot('chart-batch-scatter', [{
+                type: 'scatter', mode: 'markers+text',
+                x: [0.75, 0.82, 0.88, 0.70, 0.78, 0.65], y: [0.80, 0.78, 0.85, 0.82, 0.75, 0.88],
+                text: ['Harmony', 'scVI', 'scANVI', 'MNN', 'LIGER', 'BBKNN'], textposition: 'top center',
+                marker: { size: [45, 40, 50, 35, 35, 30], color: [colors.bluishGreen, colors.reddishPurple, colors.blue, colors.orange, colors.orange, colors.vermillion] }
+            }], { ...defaultLayout, xaxis: { title: 'Batch Removal Score', range: [0.6, 0.95] }, yaxis: { title: 'Bio Conservation Score', range: [0.7, 0.92] } }, { responsive: true, displayModeBar: false });
+            
+            Plotly.newPlot('chart-batch-radar', [
+                { type: 'scatterpolar', r: [0.75, 0.78, 0.80, 0.82, 0.95, 0.75], theta: ['kBET', 'iLISI', 'NMI', 'ARI', 'Speed', 'kBET'], fill: 'toself', name: 'Harmony', line: { color: colors.bluishGreen } },
+                { type: 'scatterpolar', r: [0.88, 0.85, 0.85, 0.87, 0.60, 0.88], theta: ['kBET', 'iLISI', 'NMI', 'ARI', 'Speed', 'kBET'], fill: 'toself', name: 'scANVI', line: { color: colors.blue } }
+            ], radarLayout, { responsive: true, displayModeBar: false });
+        }
+        
+        function initTrajectoryCharts() {
+            Plotly.newPlot('chart-trajectory-bar', [{
+                type: 'bar', x: ['Linear', 'Bifurcation', 'Tree', 'Complex'], y: [0.85, 0.78, 0.82, 0.65], name: 'Slingshot', marker: { color: colors.bluishGreen }
+            }, {
+                type: 'bar', x: ['Linear', 'Bifurcation', 'Tree', 'Complex'], y: [0.75, 0.72, 0.70, 0.85], name: 'PAGA', marker: { color: colors.blue }
+            }, {
+                type: 'bar', x: ['Linear', 'Bifurcation', 'Tree', 'Complex'], y: [0.70, 0.75, 0.78, 0.60], name: 'Monocle 2', marker: { color: colors.orange }
+            }], { ...defaultLayout, barmode: 'group', yaxis: { title: 'Performance Score', range: [0, 1] } }, { responsive: true, displayModeBar: false });
+            
+            Plotly.newPlot('chart-trajectory-radar', [
+                { type: 'scatterpolar', r: [0.85, 0.78, 0.82, 0.65, 0.80, 0.85], theta: ['Linear', 'Bifurcation', 'Tree', 'Complex', 'Scalability', 'Linear'], fill: 'toself', name: 'Slingshot', line: { color: colors.bluishGreen } },
+                { type: 'scatterpolar', r: [0.75, 0.72, 0.70, 0.85, 0.90, 0.75], theta: ['Linear', 'Bifurcation', 'Tree', 'Complex', 'Scalability', 'Linear'], fill: 'toself', name: 'PAGA', line: { color: colors.blue } }
+            ], radarLayout, { responsive: true, displayModeBar: false });
+        }
+        
+        function initFoundationCharts() {
+            Plotly.newPlot('radar-overall', [
+                { type: 'scatterpolar', r: [0.72, 0.65, 0.41, 0.68, 0.75, 0.72], theta: ['Cell Type', 'Batch Int.', 'Perturbation', 'Rare Cell', 'Scalability', 'Cell Type'], fill: 'toself', name: 'scGPT', line: { color: colors.blue } },
+                { type: 'scatterpolar', r: [0.68, 0.52, 0.38, 0.61, 0.72, 0.68], theta: ['Cell Type', 'Batch Int.', 'Perturbation', 'Rare Cell', 'Scalability', 'Cell Type'], fill: 'toself', name: 'Geneformer', line: { color: colors.reddishPurple } },
+                { type: 'scatterpolar', r: [0.78, 0.71, 0.55, 0.70, 0.85, 0.78], theta: ['Cell Type', 'Batch Int.', 'Perturbation', 'Rare Cell', 'Scalability', 'Cell Type'], fill: 'toself', name: 'RF Baseline', line: { color: colors.bluishGreen, dash: 'dash' } }
+            ], radarLayout, { responsive: true, displayModeBar: false });
+            
+            Plotly.newPlot('radar-zeroshot', [
+                { type: 'scatterpolar', r: [0.65, 0.58, 0.42, 0.55, 0.65], theta: ['Zero-Shot', 'Integration', 'Transfer', 'Novel Cell', 'Zero-Shot'], fill: 'toself', name: 'scGPT (0-shot)', line: { color: colors.blue } },
+                { type: 'scatterpolar', r: [0.82, 0.75, 0.68, 0.72, 0.82], theta: ['Zero-Shot', 'Integration', 'Transfer', 'Novel Cell', 'Zero-Shot'], fill: 'toself', name: 'scGPT (fine-tuned)', line: { color: colors.blue, dash: 'dash' } }
+            ], radarLayout, { responsive: true, displayModeBar: false });
+            
+            Plotly.newPlot('radar-perturbation', [
+                { type: 'scatterpolar', r: [0.641, 0.554, 0.327, 0.596, 0.641], theta: ['Adamson', 'Norman', 'K562', 'RPE1', 'Adamson'], fill: 'toself', name: 'scGPT', line: { color: colors.blue } },
+                { type: 'scatterpolar', r: [0.739, 0.586, 0.480, 0.648, 0.739], theta: ['Adamson', 'Norman', 'K562', 'RPE1', 'Adamson'], fill: 'toself', name: 'RF + GO', line: { color: colors.orange, dash: 'dash' } }
+            ], { ...radarLayout, polar: { radialaxis: { visible: true, range: [0, 0.8] } } }, { responsive: true, displayModeBar: false });
+            
+            Plotly.newPlot('radar-scalability', [
+                { type: 'scatterpolar', r: [0.7, 0.6, 0.75, 0.65, 0.55, 0.7], theta: ['Speed', 'Memory', 'GPU Req', 'Batch Size', 'Large Data', 'Speed'], fill: 'toself', name: 'scGPT (51M)', line: { color: colors.blue } },
+                { type: 'scatterpolar', r: [0.8, 0.75, 0.7, 0.72, 0.68, 0.8], theta: ['Speed', 'Memory', 'GPU Req', 'Batch Size', 'Large Data', 'Speed'], fill: 'toself', name: 'Geneformer', line: { color: colors.reddishPurple } }
+            ], radarLayout, { responsive: true, displayModeBar: false });
+        }
+        
+        function initComparisonCharts() {
+            Plotly.newPlot('chart-annotation-comparison', [{
+                type: 'bar', x: ['SVM', 'RF', 'XGBoost', 'CellTypist', 'scGPT', 'Geneformer', 'scFoundation'],
+                y: [0.96, 0.91, 0.90, 0.93, 0.82, 0.78, 0.80],
+                marker: { color: [colors.bluishGreen, colors.bluishGreen, colors.bluishGreen, colors.bluishGreen, colors.reddishPurple, colors.reddishPurple, colors.reddishPurple] }
+            }], { ...defaultLayout, yaxis: { title: 'F1-Score', range: [0.6, 1] }, shapes: [{ type: 'line', x0: 3.5, x1: 3.5, y0: 0.6, y1: 1, line: { dash: 'dot', width: 1, color: 'gray' } }] }, { responsive: true, displayModeBar: false });
+            
+            Plotly.newPlot('chart-perturbation-comparison', [{
+                type: 'bar', x: ['RF + GO', 'Train Mean', 'Linear', 'scGPT', 'scFoundation', 'Geneformer'],
+                y: [0.613, 0.567, 0.520, 0.530, 0.438, 0.450],
+                marker: { color: [colors.bluishGreen, colors.orange, colors.bluishGreen, colors.reddishPurple, colors.reddishPurple, colors.reddishPurple] },
+                text: ['Best', 'Baseline', '', '', '', ''], textposition: 'outside'
+            }], { ...defaultLayout, yaxis: { title: 'Mean Pearson Δ', range: [0.3, 0.7] } }, { responsive: true, displayModeBar: false });
+            
+            Plotly.newPlot('chart-integration-comparison', [{
+                type: 'bar', x: ['Harmony', 'MNN', 'BBKNN', 'scVI', 'scANVI', 'scGPT'],
+                y: [0.78, 0.72, 0.68, 0.82, 0.88, 0.75],
+                marker: { color: [colors.bluishGreen, colors.bluishGreen, colors.bluishGreen, colors.reddishPurple, colors.reddishPurple, colors.reddishPurple] }
+            }], { ...defaultLayout, yaxis: { title: 'Overall Integration Score', range: [0.5, 1] } }, { responsive: true, displayModeBar: false });
+            
+            Plotly.newPlot('chart-efficiency-comparison', [{
+                type: 'scatter', mode: 'markers+text',
+                x: [0.1, 0.2, 5, 15, 60, 120], y: [0.96, 0.91, 0.82, 0.78, 0.80, 0.85],
+                text: ['SVM', 'RF', 'scGPT', 'Geneformer', 'scFoundation', 'scANVI'], textposition: 'top center',
+                marker: { size: [35, 35, 40, 40, 45, 40], color: [colors.bluishGreen, colors.bluishGreen, colors.reddishPurple, colors.reddishPurple, colors.reddishPurple, colors.blue] }
+            }], { ...defaultLayout, xaxis: { title: 'Training Time (minutes, log scale)', type: 'log', range: [-1.5, 2.5] }, yaxis: { title: 'Performance (F1/Score)', range: [0.7, 1] } }, { responsive: true, displayModeBar: false });
+        }
+        
+        function initPECharts() {
+            Plotly.newPlot('chart-pe-ml-performance', [{
+                type: 'bar', x: ['TURF+XGB (Wang 2023)', 'XGBoost (Li 2024)', 'VC Algorithm', 'LASSO Ensemble'],
+                y: [0.926, 0.91, 0.831, 0.87],
+                marker: { color: [colors.bluishGreen, colors.blue, colors.orange, colors.reddishPurple] }
+            }], { ...defaultLayout, yaxis: { title: 'Accuracy / AUC', range: [0.7, 1] } }, { responsive: true, displayModeBar: false });
+        }
+        
+        function initPEMLCharts() {
+            Plotly.newPlot('chart-pe-methods', [{
+                type: 'bar', x: ['XGBoost', 'Random Forest', 'SVM', 'LASSO', 'Logistic Reg'],
+                y: [0.92, 0.89, 0.87, 0.85, 0.83],
+                marker: { color: [colors.bluishGreen, colors.blue, colors.orange, colors.reddishPurple, colors.vermillion] }
+            }], { ...defaultLayout, yaxis: { title: 'Average Performance (Accuracy/AUC)', range: [0.7, 1] } }, { responsive: true, displayModeBar: false });
+            
+            Plotly.newPlot('chart-pe-biomarkers', [{
+                type: 'bar', x: ['WGCNA', 'LASSO', 'ReliefF/TURF', 'Differential Expr', 'MR Integration'],
+                y: [85, 78, 92, 70, 88],
+                marker: { color: [colors.blue, colors.orange, colors.bluishGreen, colors.vermillion, colors.reddishPurple] }
+            }], { ...defaultLayout, yaxis: { title: 'Feature Selection Effectiveness (%)', range: [50, 100] } }, { responsive: true, displayModeBar: false });
+        }
+        
+        function initPEChallengeCharts() {
+            Plotly.newPlot('chart-sct-sampling', [{
+                type: 'bar', x: ['CTB', 'EVT', 'STB', 'Stromal', 'Immune'],
+                y: [1.0, 0.85, 0.02, 0.90, 0.95], name: 'scRNA-seq', marker: { color: colors.blue }
+            }, {
+                type: 'bar', x: ['CTB', 'EVT', 'STB', 'Stromal', 'Immune'],
+                y: [0.6, 0.5, 1.0, 0.55, 0.6], name: 'snRNA-seq', marker: { color: colors.orange }
+            }], { ...defaultLayout, barmode: 'group', yaxis: { title: 'Relative Sampling Efficiency', range: [0, 1.1] } }, { responsive: true, displayModeBar: false });
+            
+            Plotly.newPlot('chart-sct-sensitivity', [{
+                type: 'bar', x: ['Genes Detected', 'UMIs/Cell', 'Mature Transcripts', 'Ambient Contamination'],
+                y: [0.95, 0.90, 0.88, 0.15], name: 'scRNA-seq', marker: { color: colors.blue }
+            }, {
+                type: 'bar', x: ['Genes Detected', 'UMIs/Cell', 'Mature Transcripts', 'Ambient Contamination'],
+                y: [0.60, 0.50, 0.45, 0.75], name: 'snRNA-seq', marker: { color: colors.orange }
+            }], { ...defaultLayout, barmode: 'group', yaxis: { title: 'Relative Performance', range: [0, 1.1] } }, { responsive: true, displayModeBar: false });
+        }
+    </script>
+</body>
+</html>
